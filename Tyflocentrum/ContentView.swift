@@ -8,19 +8,29 @@
 import SwiftUI
 
 struct ContentView: View {
-    var body: some View {
-        VStack {
-            Image(systemName: "globe")
-                .imageScale(.large)
-                .foregroundColor(.accentColor)
-            Text("Hello, world!")
-        }
-        .padding()
-    }
-}
-
-struct ContentView_Previews: PreviewProvider {
-    static var previews: some View {
-        ContentView()
-    }
+	@StateObject var api = TyfloAPI.shared
+	var body: some View {
+		TabView {
+			NewsView().tabItem {
+				Text("Nowości")
+				Image(systemName: "newspaper")
+			}.tag("News")
+			PodcastCategoriesView().tabItem {
+				Text("Podcasty")
+				Image(systemName: "radio")
+			}.tag("Podcasts")
+			ArticlesCategoriesView().tabItem {
+				Text("Artykuły")
+				Image(systemName: "book")
+			}.tag("Articles")
+			SearchView().tabItem {
+				Text("Szukaj")
+				Image(systemName: "magnifyingglass")
+			}.tag("Search")
+			MoreView().tabItem {
+				Text("Więcej")
+				Image(systemName: "table.badge.more")
+			}.tag("More")
+		}.environmentObject(api)
+	}
 }
