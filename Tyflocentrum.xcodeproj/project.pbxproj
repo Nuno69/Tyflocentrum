@@ -63,6 +63,33 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		BEA9ECD129203FD700718254 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				BEEA97BA28E9D4BB0073E5AB /* ContentView.swift */,
+				BE55421B28FD548300CC0128 /* NewsView.swift */,
+				BE77EE8929000AE0002087ED /* PodcastCategoriesView.swift */,
+				BE77EE8B29000B06002087ED /* ArticlesCategoriesView.swift */,
+				BE77EE8D29000B2C002087ED /* SearchView.swift */,
+				BE77EE8F29000B39002087ED /* MoreView.swift */,
+				BED1708A29200E8700F4508B /* HTMLTextView.swift */,
+				BECDC3B52907F057009B92B2 /* ShortPodcastView.swift */,
+				BE890DFD29087659005D8DC7 /* ShortCategoryView.swift */,
+				BE56ED2E290B3BE9006ADF67 /* DetailedPodcastView.swift */,
+				BEB8A67A291CE49C00A2836F /* DetailedCategoryView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		BEA9ECD22920401000718254 /* Models */ = {
+			isa = PBXGroup;
+			children = (
+				BE890DFB29087409005D8DC7 /* Category.swift */,
+				BE8A2E4B29066C7C00923FBF /* Podcast.swift */,
+			);
+			path = Models;
+			sourceTree = "<group>";
+		};
 		BEEA97AC28E9D4BA0073E5AB = {
 			isa = PBXGroup;
 			children = (
@@ -85,23 +112,12 @@
 			children = (
 				BEEA97C628E9D6880073E5AB /* Info.plist */,
 				BEEA97B828E9D4BB0073E5AB /* TyflocentrumApp.swift */,
-				BEEA97BA28E9D4BB0073E5AB /* ContentView.swift */,
+				BEA9ECD129203FD700718254 /* Views */,
 				BEEA97BC28E9D4BB0073E5AB /* Assets.xcassets */,
 				BEEA97BE28E9D4BB0073E5AB /* Preview Content */,
 				BE1FDCD328F6DE7D00B9601B /* DataController.swift */,
-				BE55421B28FD548300CC0128 /* NewsView.swift */,
-				BE77EE8929000AE0002087ED /* PodcastCategoriesView.swift */,
-				BE890DFB29087409005D8DC7 /* Category.swift */,
-				BE77EE8B29000B06002087ED /* ArticlesCategoriesView.swift */,
-				BE77EE8D29000B2C002087ED /* SearchView.swift */,
-				BE77EE8F29000B39002087ED /* MoreView.swift */,
-				BED1708A29200E8700F4508B /* HTMLTextView.swift */,
+				BEA9ECD22920401000718254 /* Models */,
 				BE05F01029001CCA009069F7 /* TyfloAPI.swift */,
-				BE8A2E4B29066C7C00923FBF /* Podcast.swift */,
-				BECDC3B52907F057009B92B2 /* ShortPodcastView.swift */,
-				BE890DFD29087659005D8DC7 /* ShortCategoryView.swift */,
-				BE56ED2E290B3BE9006ADF67 /* DetailedPodcastView.swift */,
-				BEB8A67A291CE49C00A2836F /* DetailedCategoryView.swift */,
 			);
 			path = Tyflocentrum;
 			sourceTree = "<group>";
