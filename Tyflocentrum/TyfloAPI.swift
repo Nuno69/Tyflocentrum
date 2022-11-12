@@ -46,4 +46,34 @@ final class TyfloAPI: ObservableObject {
 			return [Category]()
 		}
 	}
+	func getPodcast(for category: Category) async -> [Podcast] {
+		guard let url = URL(string: tyfloPodcastURL+"wp/v2/posts?categories=\(category.id)&per_page=100") else {
+			print("Failed to create URL")
+			return [Podcast]()
+		}
+		do {
+			let (data, _) = try await session.data(from: url)
+			let decodedResponse = try JSONDecoder().decode([Podcast].self, from: data)
+			return decodedResponse
+		}
+		catch {
+			print("An error has occured.\n\(error.localizedDescription)")
+			return [Podcast]()
+		}
+	}
+	func getArticleCategories() async -> [Category] {
+		guard let url = URL(string: tyfloWorldURL+"wp/v2/categories?per_page=100") else {
+			print("Failed to create a valid URL")
+			return [Category]()
+		}
+		do {
+			let (data, _) = try await session.data(from: url)
+			let decodedResponse = try JSONDecoder().decode([Category].self, from: data)
+			return decodedResponse
+		}
+		catch {
+			print("An error has occurred.\n\(error.localizedDescription)")
+			return [Category]()
+		}
+	}
 }

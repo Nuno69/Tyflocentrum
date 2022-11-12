@@ -15,7 +15,11 @@ struct PodcastCategoriesView: View {
 		NavigationView {
 			List {
 				ForEach(categories) { item in
-					ShortCategoryView(category: item)
+					NavigationLink {
+						DetailedCategoryView(category: item)
+					} label: {
+						ShortCategoryView(category: item)
+					}
 				}
 			}.task {
 				categories = await api.getCategories()
