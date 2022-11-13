@@ -15,7 +15,11 @@ struct ArticlesCategoriesView: View {
 		NavigationView {
 			List {
 				ForEach(categories) {item in
-					ShortCategoryView(category: item)
+					NavigationLink {
+						DetailedArticleCategoryView(category: item)
+					} label: {
+						ShortCategoryView(category: item)
+					}
 				}
 			}.task {
 				categories = await api.getArticleCategories()
