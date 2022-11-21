@@ -23,5 +23,4 @@ struct Podcast: Codable, Identifiable {
 	var excerpt: PodcastTitle
 	var content: PodcastTitle
 	var guid: PodcastTitle
-	
 }

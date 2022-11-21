@@ -91,4 +91,10 @@ final class TyfloAPI: ObservableObject {
 			return [Podcast]()
 		}
 	}
+	func getListenableURL(for podcast: Podcast) -> URL {
+		guard let url = URL(string: "https://tyflopodcast.net/pobierz.php?id=\(podcast.id)&plik=0") else {
+			fatalError("Error")
+		}
+		return url
+	}
 }
