@@ -10,7 +10,7 @@ import SwiftUI
 struct MediaPlayerView: View {
 	@EnvironmentObject var api: TyfloAPI
 	@EnvironmentObject var bass: BassHelper
-	let podcast: Podcast
+	let podcast: URL
 	let shouldAutoplay = false
 	@State private var handle: HSTREAM = 0
 	func togglePlayback() {
@@ -30,7 +30,7 @@ struct MediaPlayerView: View {
 				Image(systemName: bass.isPlaying ? "pause.circle.fill" : "play.circle.fill").font(.title).imageScale(.large)
 			}.accessibilityLabel(bass.isPlaying ? "Pauza" : "Odtwarzaj")
 		}.navigationTitle("Odtwarzacz").onAppear {
-			handle = bass.play(url: api.getListenableURL(for: podcast))
+			handle = bass.play(url: podcast)
 		}.accessibilityAction(.magicTap) {
 			togglePlayback()
 		}

@@ -11,8 +11,13 @@ import SwiftUI
 struct MoreView: View {
 	var body: some View {
 		NavigationView {
-			List {
-				
+			VStack {
+				NavigationLink {
+					// Test test
+					MediaPlayerView(podcast: URL(string: "https://stream-47.zeno.fm/5xyz0tc1wc9uv?zs=ulzZl64tRYaGXfASxigJWg")!)
+				} label: {
+					Text("Posłuchaj Tyfloradia! (niestabilne że aż boli)")
+				}
 			}.navigationTitle("Więcej")
 		}
 	}

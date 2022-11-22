@@ -36,6 +36,7 @@
 		BED6A47B2926DE8000BA378B /* AVFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE64D6CE2925A2C7001F9A45 /* AVFoundation.framework */; };
 		BED6A4852926E14300BA378B /* BASSHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED6A4842926E14300BA378B /* BASSHelper.swift */; };
 		BED6A4872926F11D00BA378B /* StringHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED6A4862926F11D00BA378B /* StringHelper.swift */; };
+		BEDE145E292CE26E00C25C27 /* Comment.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEDE145D292CE26E00C25C27 /* Comment.swift */; };
 		BEEA97B928E9D4BB0073E5AB /* TyflocentrumApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEA97B828E9D4BB0073E5AB /* TyflocentrumApp.swift */; };
 		BEEA97BB28E9D4BB0073E5AB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEA97BA28E9D4BB0073E5AB /* ContentView.swift */; };
 		BEEA97BD28E9D4BB0073E5AB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BEEA97BC28E9D4BB0073E5AB /* Assets.xcassets */; };
@@ -87,6 +88,7 @@
 		BED6A4832926E0DA00BA378B /* bass.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = bass.h; sourceTree = "<group>"; };
 		BED6A4842926E14300BA378B /* BASSHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BASSHelper.swift; sourceTree = "<group>"; };
 		BED6A4862926F11D00BA378B /* StringHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StringHelper.swift; sourceTree = "<group>"; };
+		BEDE145D292CE26E00C25C27 /* Comment.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Comment.swift; sourceTree = "<group>"; };
 		BEEA97B528E9D4BB0073E5AB /* Tyflocentrum.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Tyflocentrum.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		BEEA97B828E9D4BB0073E5AB /* TyflocentrumApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TyflocentrumApp.swift; sourceTree = "<group>"; };
 		BEEA97BA28E9D4BB0073E5AB /* ContentView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContentView.swift; sourceTree = "<group>"; };
@@ -152,6 +154,7 @@
 			children = (
 				BE890DFB29087409005D8DC7 /* Category.swift */,
 				BE8A2E4B29066C7C00923FBF /* Podcast.swift */,
+				BEDE145D292CE26E00C25C27 /* Comment.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -295,6 +298,7 @@
 				BEB8A67B291CE49C00A2836F /* DetailedCategoryView.swift in Sources */,
 				BE8A2E4C29066C7C00923FBF /* Podcast.swift in Sources */,
 				BE890DFC29087409005D8DC7 /* Category.swift in Sources */,
+				BEDE145E292CE26E00C25C27 /* Comment.swift in Sources */,
 				BE05F01129001CCA009069F7 /* TyfloAPI.swift in Sources */,
 				BEEA97B928E9D4BB0073E5AB /* TyflocentrumApp.swift in Sources */,
 				BED1708B29200E8700F4508B /* HTMLTextView.swift in Sources */,

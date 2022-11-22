@@ -97,4 +97,38 @@ final class TyfloAPI: ObservableObject {
 		}
 		return url
 	}
+	func getPodcasts(for searchString: String) async -> [Podcast] {
+		guard let url = URL(string: tyfloPodcastURL+"wp/v2/posts?per_page=100&search=\(searchString)") else {
+			print("Failed to create URL")
+			return [Podcast]()
+		}
+		do {
+			let (data, _) = try await session.data(from: url)
+			let decodedResponse = try JSONDecoder().decode([Podcast].self, from: data)
+			return decodedResponse
+		}
+		catch {
+			print("An error has occurred.\n\(error.localizedDescription)")
+			return [Podcast]()
+		}
+		
+	}
+	func getComments(for podcast: Podcast) async -> [Comment] {
+		guard let url = URL(string: tyfloPodcastURL+"wp/v2/comments?post=\(podcast.id)&per_page=100") else {
+			print("Error")
+			return [Comment]()
+		}
+		do {
+			let(data, _) = try await session.data(from: url)
+			let decoder = JSONDecoder()
+			decoder.dateDecodingStrategy = .iso8601
+			decoder.keyDecodingStrategy = .convertFromSnakeCase
+			let decodedResponse = try decoder.decode([Comment].self, from: data)
+			return decodedResponse
+		}
+		catch {
+			print("Error\n\(error.localizedDescription)\n\(url.absoluteString)")
+			return [Comment]()
+		}
+	}
 }
