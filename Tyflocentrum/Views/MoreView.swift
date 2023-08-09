@@ -14,7 +14,7 @@ struct MoreView: View {
 			VStack {
 				NavigationLink {
 					// Test test
-					MediaPlayerView(podcast: URL(string: "https://stream-47.zeno.fm/5xyz0tc1wc9uv?zs=ulzZl64tRYaGXfASxigJWg")!)
+					MediaPlayerView(podcast: URL(string: "https://stream-47.zeno.fm/5xyz0tc1wc9uv?zs=ulzZl64tRYaGXfASxigJWg")!, canBeLive: true)
 				} label: {
 					Text("Posłuchaj Tyfloradia! (niestabilne że aż boli)")
 				}

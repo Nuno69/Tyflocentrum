@@ -12,7 +12,19 @@ struct MediaPlayerView: View {
 	@EnvironmentObject var bass: BassHelper
 	let podcast: URL
 	let shouldAutoplay = false
+	let canBeLive: Bool
 	@State private var handle: HSTREAM = 0
+	@State private var shouldShowContactForm = false
+	@State private var shouldShowNoLiveAlert = false
+	func performLiveCheck() async -> Void{
+		let (available, _) = await api.isTPAvailable()
+		if available {
+			shouldShowContactForm = true
+		}
+		else {
+			shouldShowNoLiveAlert = true
+		}
+	}
 	func togglePlayback() {
 		if bass.isPlaying {
 			bass.pause(handle)
@@ -29,8 +41,23 @@ struct MediaPlayerView: View {
 			} label: {
 				Image(systemName: bass.isPlaying ? "pause.circle.fill" : "play.circle.fill").font(.title).imageScale(.large)
 			}.accessibilityLabel(bass.isPlaying ? "Pauza" : "Odtwarzaj")
+			if canBeLive {
+				Button("Skontaktuj się z radiem") {
+					Task {
+						await performLiveCheck()
+					}
+				}.alert("Błąd", isPresented: $shouldShowNoLiveAlert) {
+					Button("OK"){}
+				} message: {
+					Text("Na antenie Tyfloradia nie trwa teraz żadna audycja interaktywna.")
+				}.sheet(isPresented: $shouldShowContactForm) {
+					ContactView()
+				}
+			}
 		}.navigationTitle("Odtwarzacz").onAppear {
-			handle = bass.play(url: podcast)
+			Task {
+				handle = bass.play(url: podcast)
+			}
 		}.accessibilityAction(.magicTap) {
 			togglePlayback()
 		}

@@ -7,10 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		1E221D5F2A7E6DB000369E1C /* bass.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE64D6D62925A353001F9A45 /* bass.xcframework */; };
+		1E221D602A7E6DB000369E1C /* bass.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BE64D6D62925A353001F9A45 /* bass.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
+		BC1D24D12C256E5D00FB25D3 /* readme.md in Resources */ = {isa = PBXBuildFile; fileRef = BC1D24D02C256E5D00FB25D3 /* readme.md */; };
 		BE05F01129001CCA009069F7 /* TyfloAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE05F01029001CCA009069F7 /* TyfloAPI.swift */; };
 		BE1FDCD428F6DE7D00B9601B /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1FDCD328F6DE7D00B9601B /* DataController.swift */; };
-		BE2ACFF8292B66CC001914EB /* bass.xcframework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE64D6D62925A353001F9A45 /* bass.xcframework */; };
-		BE2ACFF9292B66CC001914EB /* bass.xcframework in Embed Frameworks */ = {isa = PBXBuildFile; fileRef = BE64D6D62925A353001F9A45 /* bass.xcframework */; settings = {ATTRIBUTES = (CodeSignOnCopy, RemoveHeadersOnCopy, ); }; };
 		BE2ACFFC292B67C1001914EB /* Changelog.rtf in Resources */ = {isa = PBXBuildFile; fileRef = BE2ACFFB292B67C1001914EB /* Changelog.rtf */; };
 		BE55421C28FD548300CC0128 /* NewsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE55421B28FD548300CC0128 /* NewsView.swift */; };
 		BE56ED2F290B3BE9006ADF67 /* DetailedPodcastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE56ED2E290B3BE9006ADF67 /* DetailedPodcastView.swift */; };
@@ -27,6 +28,7 @@
 		BEA9ECD429204CD400718254 /* DetailedArticleCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEA9ECD329204CD400718254 /* DetailedArticleCategoryView.swift */; };
 		BEB8A67B291CE49C00A2836F /* DetailedCategoryView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEB8A67A291CE49C00A2836F /* DetailedCategoryView.swift */; };
 		BEBAB45F292931BB009967A0 /* MediaPlayerView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEBAB45E292931BB009967A0 /* MediaPlayerView.swift */; };
+		BEC9AB97292E56FF009907EB /* Schedule.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEC9AB96292E56FF009907EB /* Schedule.swift */; };
 		BECDC3B62907F057009B92B2 /* ShortPodcastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BECDC3B52907F057009B92B2 /* ShortPodcastView.swift */; };
 		BED1708B29200E8700F4508B /* HTMLTextView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BED1708A29200E8700F4508B /* HTMLTextView.swift */; };
 		BED6A4772926DDFE00BA378B /* AudioToolbox.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = BE64D6C12925A1F9001F9A45 /* AudioToolbox.framework */; };
@@ -41,16 +43,18 @@
 		BEEA97BB28E9D4BB0073E5AB /* ContentView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEA97BA28E9D4BB0073E5AB /* ContentView.swift */; };
 		BEEA97BD28E9D4BB0073E5AB /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BEEA97BC28E9D4BB0073E5AB /* Assets.xcassets */; };
 		BEEA97C028E9D4BB0073E5AB /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = BEEA97BF28E9D4BB0073E5AB /* Preview Assets.xcassets */; };
+		BEEC27DB292E775700F0D869 /* ContactView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEEC27DA292E775700F0D869 /* ContactView.swift */; };
+		BEF5F7EE292E8BE20065E572 /* ContactResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = BEF5F7ED292E8BE20065E572 /* ContactResponse.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
-		BE2ACFFA292B66CC001914EB /* Embed Frameworks */ = {
+		1E221D612A7E6DB000369E1C /* Embed Frameworks */ = {
 			isa = PBXCopyFilesBuildPhase;
 			buildActionMask = 2147483647;
 			dstPath = "";
 			dstSubfolderSpec = 10;
 			files = (
-				BE2ACFF9292B66CC001914EB /* bass.xcframework in Embed Frameworks */,
+				1E221D602A7E6DB000369E1C /* bass.xcframework in Embed Frameworks */,
 			);
 			name = "Embed Frameworks";
 			runOnlyForDeploymentPostprocessing = 0;
@@ -58,6 +62,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		BC1D24D02C256E5D00FB25D3 /* readme.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = readme.md; sourceTree = "<group>"; };
 		BE05F01029001CCA009069F7 /* TyfloAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TyfloAPI.swift; sourceTree = "<group>"; };
 		BE1FDCD328F6DE7D00B9601B /* DataController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DataController.swift; sourceTree = "<group>"; };
 		BE2ACFFB292B67C1001914EB /* Changelog.rtf */ = {isa = PBXFileReference; lastKnownFileType = text.rtf; path = Changelog.rtf; sourceTree = "<group>"; };
@@ -82,6 +87,7 @@
 		BEA9ECD329204CD400718254 /* DetailedArticleCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedArticleCategoryView.swift; sourceTree = "<group>"; };
 		BEB8A67A291CE49C00A2836F /* DetailedCategoryView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DetailedCategoryView.swift; sourceTree = "<group>"; };
 		BEBAB45E292931BB009967A0 /* MediaPlayerView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MediaPlayerView.swift; sourceTree = "<group>"; };
+		BEC9AB96292E56FF009907EB /* Schedule.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Schedule.swift; sourceTree = "<group>"; };
 		BECDC3B52907F057009B92B2 /* ShortPodcastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShortPodcastView.swift; sourceTree = "<group>"; };
 		BED1708A29200E8700F4508B /* HTMLTextView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HTMLTextView.swift; sourceTree = "<group>"; };
 		BED6A4802926E06C00BA378B /* Tyflocentrum-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "Tyflocentrum-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -95,6 +101,8 @@
 		BEEA97BC28E9D4BB0073E5AB /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		BEEA97BF28E9D4BB0073E5AB /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
 		BEEA97C628E9D6880073E5AB /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist; path = Info.plist; sourceTree = "<group>"; };
+		BEEC27DA292E775700F0D869 /* ContactView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactView.swift; sourceTree = "<group>"; };
+		BEF5F7ED292E8BE20065E572 /* ContactResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ContactResponse.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -104,7 +112,7 @@
 			files = (
 				BED6A4792926DE4700BA378B /* CFNetwork.framework in Frameworks */,
 				BED6A47A2926DE5C00BA378B /* Accelerate.framework in Frameworks */,
-				BE2ACFF8292B66CC001914EB /* bass.xcframework in Frameworks */,
+				1E221D5F2A7E6DB000369E1C /* bass.xcframework in Frameworks */,
 				BED6A47B2926DE8000BA378B /* AVFoundation.framework in Frameworks */,
 				BED6A4782926DE2C00BA378B /* SystemConfiguration.framework in Frameworks */,
 				BED6A4772926DDFE00BA378B /* AudioToolbox.framework in Frameworks */,
@@ -145,6 +153,7 @@
 				BEA9ECD329204CD400718254 /* DetailedArticleCategoryView.swift */,
 				BE71654029219DB700FF9A89 /* HTMLRendererHelper.swift */,
 				BEBAB45E292931BB009967A0 /* MediaPlayerView.swift */,
+				BEEC27DA292E775700F0D869 /* ContactView.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -155,6 +164,8 @@
 				BE890DFB29087409005D8DC7 /* Category.swift */,
 				BE8A2E4B29066C7C00923FBF /* Podcast.swift */,
 				BEDE145D292CE26E00C25C27 /* Comment.swift */,
+				BEC9AB96292E56FF009907EB /* Schedule.swift */,
+				BEF5F7ED292E8BE20065E572 /* ContactResponse.swift */,
 			);
 			path = Models;
 			sourceTree = "<group>";
@@ -193,6 +204,7 @@
 				BED6A4842926E14300BA378B /* BASSHelper.swift */,
 				BED6A4862926F11D00BA378B /* StringHelper.swift */,
 				BE2ACFFB292B67C1001914EB /* Changelog.rtf */,
+				BC1D24D02C256E5D00FB25D3 /* readme.md */,
 			);
 			path = Tyflocentrum;
 			sourceTree = "<group>";
@@ -215,7 +227,7 @@
 				BEEA97B128E9D4BA0073E5AB /* Sources */,
 				BEEA97B228E9D4BA0073E5AB /* Frameworks */,
 				BEEA97B328E9D4BA0073E5AB /* Resources */,
-				BE2ACFFA292B66CC001914EB /* Embed Frameworks */,
+				1E221D612A7E6DB000369E1C /* Embed Frameworks */,
 			);
 			buildRules = (
 			);
@@ -234,7 +246,7 @@
 			attributes = {
 				BuildIndependentTargetsInParallel = 1;
 				LastSwiftUpdateCheck = 1410;
-				LastUpgradeCheck = 1410;
+				LastUpgradeCheck = 1500;
 				TargetAttributes = {
 					BEEA97B428E9D4BA0073E5AB = {
 						CreatedOnToolsVersion = 14.1;
@@ -268,6 +280,7 @@
 			files = (
 				BEEA97C028E9D4BB0073E5AB /* Preview Assets.xcassets in Resources */,
 				BEEA97BD28E9D4BB0073E5AB /* Assets.xcassets in Resources */,
+				BC1D24D12C256E5D00FB25D3 /* readme.md in Resources */,
 				BE2ACFFC292B67C1001914EB /* Changelog.rtf in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -292,9 +305,12 @@
 				BE77EE9029000B39002087ED /* MoreView.swift in Sources */,
 				BEA9ECD429204CD400718254 /* DetailedArticleCategoryView.swift in Sources */,
 				BE77EE8E29000B2C002087ED /* SearchView.swift in Sources */,
+				BEC9AB97292E56FF009907EB /* Schedule.swift in Sources */,
 				BE56ED2F290B3BE9006ADF67 /* DetailedPodcastView.swift in Sources */,
 				BEBAB45F292931BB009967A0 /* MediaPlayerView.swift in Sources */,
+				BEF5F7EE292E8BE20065E572 /* ContactResponse.swift in Sources */,
 				BE55421C28FD548300CC0128 /* NewsView.swift in Sources */,
+				BEEC27DB292E775700F0D869 /* ContactView.swift in Sources */,
 				BEB8A67B291CE49C00A2836F /* DetailedCategoryView.swift in Sources */,
 				BE8A2E4C29066C7C00923FBF /* Podcast.swift in Sources */,
 				BE890DFC29087409005D8DC7 /* Category.swift in Sources */,
@@ -313,6 +329,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -345,6 +362,7 @@
 				DEBUG_INFORMATION_FORMAT = dwarf;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
 				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_NO_COMMON_BLOCKS = YES;
@@ -373,6 +391,7 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ALWAYS_SEARCH_USER_PATHS = NO;
+				CLANG_ANALYZER_LOCALIZABILITY_NONLOCALIZED = YES;
 				CLANG_ANALYZER_NONNULL = YES;
 				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
 				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
@@ -405,6 +424,7 @@
 				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
 				ENABLE_NS_ASSERTIONS = NO;
 				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu11;
 				GCC_NO_COMMON_BLOCKS = YES;
 				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
@@ -429,6 +449,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Tyflocentrum/Preview Content\"";
@@ -442,7 +463,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -450,6 +471,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nunosoft.Tyflocentrum;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Tyflocentrum/Tyflocentrum-Bridging-Header.h";
 				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
@@ -464,6 +486,7 @@
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"Tyflocentrum/Preview Content\"";
@@ -477,7 +500,7 @@
 				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
 				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
-				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
+				IPHONEOS_DEPLOYMENT_TARGET = 17.0;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -485,6 +508,7 @@
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = com.nunosoft.Tyflocentrum;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				PROVISIONING_PROFILE_SPECIFIER = "";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_OBJC_BRIDGING_HEADER = "Tyflocentrum/Tyflocentrum-Bridging-Header.h";
 				SWIFT_VERSION = 5.0;

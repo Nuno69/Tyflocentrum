@@ -1,11 +1,44 @@
-{\rtf1\ansi\ansicpg1252\cocoartf2707
+{\rtf1\ansi\ansicpg1252\cocoartf2755
 \cocoatextscaling0\cocoaplatform0{\fonttbl\f0\fswiss\fcharset0 Helvetica;}
 {\colortbl;\red255\green255\blue255;}
 {\*\expandedcolortbl;;}
 \margl1440\margr1440\vieww9000\viewh8400\viewkind0
 \pard\tx720\tx1440\tx2160\tx2880\tx3600\tx4320\tx5040\tx5760\tx6480\tx7200\tx7920\tx8640\pardirnatural\partightenfactor0
 
-\f0\fs24 \cf0 1.0.9\
+\f0\fs24 \cf0 1.14\
+1. Zmniejszono zu\uc0\u380 ycie baterii poprzez zmniejszenie cz\u281 stotliwo\u347 ci buforowania danych z serwera. Od teraz Tyflocentrum b\u281 dzie pobiera\u322 o wi\u281 cej danych ale co mniejszy odcinek czasu. Mo\u380 e to wp\u322 yn\u261 \u263  na czasy \u322 adowania danych, oczywi\u347 cie negatywnie. Dajcie zna\u263  co i jak\
+2. Przygotowano aplikacj\uc0\u281  pod czekaj\u261 c\u261  j\u261  gruntown\u261  przebudow\u281 .\
+2.1. Rozbito aplikacj\uc0\u281  na mniejsze modu\u322 y: UI, TyflopodcastKit, TyfloWorldKit, AudioPlayerKit.\
+2.2. Zacz\uc0\u281 to dokumentowa\u263  kod i pisa\u263  pod niego testy jednostkowe. W momencie gdy sam zacz\u261 \u322 em si\u281  gubi\u263  w swoim kodzie stwierdzi\u322 em \u380 e kiedy\u347  trzeba.\
+3. Zmieniono spos\'f3b podpisu aplikacji. JE\uc0\u380 eli system b\u281 dzie prosi\u322  o uprawnienia, kt\'f3rych aplikacja nie potrzebuje zignorujcie to.\
+4. Podbito minimaln\uc0\u261  wersj\u281  systemu do iOS 16.5 (16.0 nie jest ju\u380  wspierana).\
+5. Usprawniono wyszukiwark\uc0\u281 . Od teraz aplikacja nie b\u281 dzie wog\'f3le bra\u322 a pod uwag\u281  wielko\u347 ci liter. Zobaczymy jak to pomo\u380 e.\
+\
+1.13\
+1. Na chama podbito numer wersji w celu odnowienia certyfikatu. Pozdrowienia z W\uc0\u322 och!!! Nowe wersje aplikacji b\u281 d\u261  tworzone w miar\u281  czasu. Pomys\u322 u w \u380 adnym razie nie zarzucam.\
+\
+1.12\
+1. Dodano wy\uc0\u347 wietlanie daty w nag\u322 \'f3wku podcastu.\
+2. Wiadomo\uc0\u347 \u263  te\u380  jest zapisywana podczas pisania, je\u380 eli aplikacja nieoczekiwanie zako\u324 czy dzia\u322 anie wiadomo\u347 \u263  zostanie zapisana na "za\u347 ".\
+3. Poprawiono b\uc0\u322 \u261 d uniemo\u380 liwiaj\u261 cy przes\u322 anie wiadomo\u347 ci je\u380 eli znajduje si\u281  w niej zbyt du\u380 o znak\'f3w bia\u322 ych (spacje, nowe linie).\
+\
+1.11\
+1. Naprawiono b\uc0\u322 \u261 d z lagowaniem odtwarzacza podczas \u322 \u261 czenia si\u281  z serwerem.\
+2. Od teraz nazwa u\uc0\u380 ytkownika u\u380 ywana do kontaktu z radiem b\u281 dzie zapisana pomi\u281 dzy sesjami.\
+3. Poprawiono b\uc0\u322 \u261 d kt\'f3ry sprawia\u322  \u380 e zak\u322 adka "Nowo\u347 ci" nie mia\u322 a tytu\u322 u.\
+4. Dodano informacj\uc0\u281  g\u322 osow\u261  o poprawnym wys\u322 aniu wiadomo\u347 ci do radia.\
+5. Dodano przycisk "Anuluj" do okna kontaktu. \uc0\u379 e te\u380  takie rzeczy trzeba tu logowa\u263  ;).\
+6. Przeniesiono przyciski kontrolne "s\uc0\u322 uchaj" i "Udost\u281 pnij" na pasek narz\u281 dzi u g\'f3ry okna.\
+7. Dodano mo\uc0\u380 liwo\u347 \u263  wl\u261 czenia audycji bezpo\u347 rednio  czynno\u347 ci VO (debugowanie).\
+\
+1.10\
+1. Dodano liczb\uc0\u281  komentarzy obok ka\u380 dej audycji.\
+2. Dodano mo\uc0\u380 liwo\u347 \u263  kontaktu z radiem w formie tekstowej.\
+3. Poprawiono rozmiary czcionek i brak zawijania tekstu w niekt\'f3rych sytuacjach.\
+4. Dodano podstawowe logowanie zdarze\uc0\u324  (tj. b\u322 \u281 d\'f3w, wyj\u261 tk\'f3w, ETC)\
+5. Kod aplikacji jest zamro\uc0\u380 ony, poprawiane b\u281 d\u261  tylko b\u322 \u281 dy i usprawniany b\u281 dzie interfejs, a\u380  do wydania wersji 1.0 w AppStore, kt\'f3ra (jak dobrze p\'f3jdzie) zostanie wydana za dwa tygodnie, t.j dnia 7 grudnia 2022 R. Jedyn\u261  now\u261  funkcj\u261  b\u281 dzie mo\u380 liwo\u347 \u263  przewijania i integracja z systemowym centrum odtwarzania\
+\
+1.0.9\
 1. Dodano mo\uc0\u380 liwo\u347 \u263  przeszukiwania (na razie tylko Tyflopodcastu)\
 \
 1.0.8\

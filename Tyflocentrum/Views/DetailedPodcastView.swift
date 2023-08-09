@@ -16,22 +16,21 @@ struct DetailedPodcastView: View {
 	var body: some View {
 		VStack {
 			HTMLTextView(text: podcast.content.rendered)
-			HStack(spacing: 20) {
-				ShareLink(item: podcast.guid.rendered, message: Text("Posłuchaj audycji \(podcast.title.rendered) w serwisie Tyflopodcast!\nUdostępnione przy pomocy aplikacji Tyflocentrum"))
-				NavigationLink {
-					MediaPlayerView(podcast: api.getListenableURL(for: podcast))
-				} label: {
-					Text("Słuchaj")
-				}
-				if comments.isEmpty {
-					Text("Brak komentarzy")
-				}
-				else {
-					Text("\(comments.count) komentarzy")
-				}
+			if comments.isEmpty {
+				Text("Brak komentarzy")
 			}
-		}.navigationTitle(podcast.title.rendered).navigationBarTitleDisplayMode(.inline).task {
+			else {
+				Text("\(comments.count) komentarzy")
+			}
+		}.navigationTitle("\(podcast.title.rendered) z dnia \(podcast.date)").navigationBarTitleDisplayMode(.inline).task {
 			comments = await api.getComments(for: podcast)
+		}.toolbar {
+			ShareLink("udostępnij", item: podcast.guid.rendered, message: Text("Posłuchaj audycji \(podcast.title.rendered) w serwisie Tyflopodcast!\nUdostępnione przy pomocy aplikacji Tyflocentrum"))
+			NavigationLink {
+				MediaPlayerView(podcast: api.getListenableURL(for: podcast), canBeLive: false)
+			} label: {
+				Text("Słuchaj")
+			}
 		}
 	}
 }

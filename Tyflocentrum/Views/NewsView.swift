@@ -27,7 +27,7 @@ struct NewsView: View {
 					await podcasts = api.getLatestPodcasts()
 				}.task {
 					await podcasts = api.getLatestPodcasts()
-				}.navigationTitle("nowości")
+				}.navigationTitle("Nowości")
 		}
 	}
 }

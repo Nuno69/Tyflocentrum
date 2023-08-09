@@ -14,7 +14,7 @@ final class BassHelper: ObservableObject {
 	private init() {
 		BASS_SetConfig(UInt32(BASS_CONFIG_IOS_SESSION), UInt32(BASS_IOS_SESSION_DISABLE))
 		let result = BASS_Init(-1, 44100, 0, nil, nil)
-		print("\(result) został zwrócony")
+1		print("\(result) został zwrócony")
 	}
 	private func createHandle(from url: URL) -> HSTREAM? {
 		let pointer = url.absoluteString.pointer
