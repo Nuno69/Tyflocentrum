@@ -5,51 +5,23 @@ on:
     branches: ["master"]
   workflow_dispatch:
 
+concurrency:
+  group: ios-unsigned-ipa-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  actions: read
+  contents: read
+
 jobs:
   build:
+    name: Build (GitHub-hosted)
     runs-on: macos-14
     steps:
       - uses: actions/checkout@v4
 
-      - name: Xcode version
-        run: xcodebuild -version
-
-      - name: SwiftFormat (lint)
-        run: |
-          brew install swiftformat
-          swiftformat --config .swiftformat --lint .
-
-      - name: Test (Simulator)
-        run: |
-          xcodebuild \
-            -project Tyflocentrum.xcodeproj \
-            -scheme Tyflocentrum \
-            -configuration Debug \
-            -sdk iphonesimulator \
-            -destination 'platform=iOS Simulator,name=iPhone 15' \
-            -parallel-testing-enabled NO \
-            -parallel-testing-worker-count 1 \
-            test
-
-      - name: Archive (no codesign)
-        run: |
-          xcodebuild \
-            -project Tyflocentrum.xcodeproj \
-            -scheme Tyflocentrum \
-            -configuration Release \
-            -sdk iphoneos \
-            -destination 'generic/platform=iOS' \
-            -archivePath build/Tyflocentrum.xcarchive \
-            archive \
-            CODE_SIGNING_ALLOWED=NO \
-            CODE_SIGNING_REQUIRED=NO \
-            CODE_SIGN_IDENTITY=""
-
-      - name: Create unsigned IPA
-        run: |
-          mkdir -p Payload
-          cp -R build/Tyflocentrum.xcarchive/Products/Applications/*.app Payload/
-          /usr/bin/zip -r tyflocentrum.ipa Payload
+      - name: Lint, test and build unsigned IPA
+        run: bash scripts/build-unsigned-ipa.sh
 
       - uses: actions/upload-artifact@v4
         with:

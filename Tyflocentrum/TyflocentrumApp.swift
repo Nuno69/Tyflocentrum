@@ -21,6 +21,7 @@ struct TyflocentrumApp: App {
 	@StateObject private var audioPlayer: AudioPlayer
 	@StateObject private var favoritesStore: FavoritesStore
 	@StateObject private var settingsStore: SettingsStore
+	@StateObject private var diagnosticsStore: DiagnosticsStore
 	@StateObject private var magicTapCoordinator = MagicTapCoordinator()
 	@StateObject private var pushNotifications = PushNotificationsManager()
 
@@ -42,11 +43,13 @@ struct TyflocentrumApp: App {
 				)
 			)
 			_favoritesStore = StateObject(wrappedValue: FavoritesStore(userDefaults: defaults))
+			_diagnosticsStore = StateObject(wrappedValue: DiagnosticsStore(userDefaults: defaults))
 		} else {
 			let settings = SettingsStore()
 			_settingsStore = StateObject(wrappedValue: settings)
 			_audioPlayer = StateObject(wrappedValue: AudioPlayer(playbackRateModeProvider: { settings.playbackRateRememberMode }))
 			_favoritesStore = StateObject(wrappedValue: FavoritesStore())
+			_diagnosticsStore = StateObject(wrappedValue: DiagnosticsStore())
 		}
 	}
 
@@ -59,6 +62,7 @@ struct TyflocentrumApp: App {
 					.environmentObject(audioPlayer)
 					.environmentObject(favoritesStore)
 					.environmentObject(settingsStore)
+					.environmentObject(diagnosticsStore)
 					.environmentObject(pushNotifications)
 					.environmentObject(magicTapCoordinator),
 				onMagicTap: {
@@ -564,10 +568,11 @@ private final class UITestURLProtocol: URLProtocol {
 				if shouldFail {
 					return (500, Data("{}".utf8))
 				}
+				let content = isFlagEnabled("UI_TESTING_LARGE_PODCAST_CONTENT") ? makeLargePodcastHTMLContent() : "Content"
 				return (
 					200,
 					#"""
-						{"id":\#(postID),"date":"2026-01-20T00:59:40","title":{"rendered":"Test podcast"},"excerpt":{"rendered":"Excerpt"},"content":{"rendered":"Content"},"guid":{"rendered":"https://tyflopodcast.net/?p=\#(postID)"},"link":"https://tyflopodcast.net/?p=\#(postID)"}
+						{"id":\#(postID),"date":"2026-01-20T00:59:40","title":{"rendered":"Test podcast"},"excerpt":{"rendered":"Excerpt"},"content":{"rendered":"\#(content)"},"guid":{"rendered":"https://tyflopodcast.net/?p=\#(postID)"},"link":"https://tyflopodcast.net/?p=\#(postID)"}
 					"""#.data(using: .utf8) ?? Data()
 				)
 			}
@@ -618,6 +623,25 @@ private final class UITestURLProtocol: URLProtocol {
 			return (
 				200,
 				#"[{"id":1,"date":"2026-01-20T00:59:40","title":{"rendered":"Test podcast"},"excerpt":{"rendered":"Excerpt"},"content":{"rendered":"Content"},"guid":{"rendered":"https://tyflopodcast.net/?p=1"},"link":"https://tyflopodcast.net/?p=1"},{"id":3,"date":"2026-01-21T00:59:40","title":{"rendered":"Test podcast 2"},"excerpt":{"rendered":"Excerpt"},"content":{"rendered":"Content"},"guid":{"rendered":"https://tyflopodcast.net/?p=3"},"link":"https://tyflopodcast.net/?p=3"}]"#.data(using: .utf8) ?? Data("[]".utf8)
+			)
+		}
+
+		if url.host == "tyflopodcast.net", url.path.contains("/wp-json/wp/v2/comments") {
+			let components = URLComponents(url: url, resolvingAgainstBaseURL: false)
+			let postID = Int(components?.queryItems?.first(where: { $0.name == "post" })?.value ?? "")
+
+			guard postID == 1 else {
+				return (200, Data("[]".utf8))
+			}
+
+			return (
+				200,
+				#"""
+				[
+					{"id":1001,"post":1,"parent":0,"author_name":"TyfloPodcast","content":{"rendered":"Znaczniki czasu:<br>Intro 00:00:00<br>Temat 00:01:00<br><br>A oto odnośniki uzupełniające audycję:<br>- Link testowy: https://example.com<br>"}},
+					{"id":1002,"post":1,"parent":0,"author_name":"Słuchacz","content":{"rendered":"Świetny odcinek!"}}
+				]
+				"""#.data(using: .utf8) ?? Data("[]".utf8)
 			)
 		}
 
@@ -712,6 +736,11 @@ private final class UITestURLProtocol: URLProtocol {
 		}
 
 		return (200, Data("[]".utf8))
+	}
+
+	private static func makeLargePodcastHTMLContent() -> String {
+		let paragraph = "<p>To jest długi testowy opis audycji. Ma symulować duże HTML, które wcześniej mogło blokować UI.</p>"
+		return String(repeating: paragraph, count: 8000)
 	}
 
 	private static func isFlagEnabled(_ flag: String) -> Bool {

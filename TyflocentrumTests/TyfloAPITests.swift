@@ -546,6 +546,27 @@ final class TyfloAPITests: XCTestCase {
 		XCTAssertEqual(requestCount, 3)
 	}
 
+	func testFetchWPPageRetriesOnCancelledURLError() async throws {
+		var requestCount = 0
+
+		StubURLProtocol.requestHandler = { request in
+			requestCount += 1
+			let url = try XCTUnwrap(request.url)
+
+			if requestCount == 1 {
+				throw URLError(.cancelled)
+			}
+
+			let response = HTTPURLResponse(url: url, statusCode: 200, httpVersion: nil, headerFields: nil)!
+			return (response, Data("[]".utf8))
+		}
+
+		let api = TyfloAPI(session: makeSession())
+		let page = try await api.fetchArticleSummariesPage(page: 1, perPage: 10)
+		XCTAssertTrue(page.items.isEmpty)
+		XCTAssertEqual(requestCount, 2)
+	}
+
 	func testGetArticleCategoriesUsesCorrectHost() async {
 		let requestMade = expectation(description: "request made")
 

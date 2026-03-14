@@ -13,6 +13,8 @@
 			BE05F01129001CCA009069F7 /* TyfloAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE05F01029001CCA009069F7 /* TyfloAPI.swift */; };
 			A1B2C3D4E5F60718293A4B90 /* DeviceCapabilities.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B8F /* DeviceCapabilities.swift */; };
 			A1B2C3D4E5F60718293A4B95 /* Logging.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B94 /* Logging.swift */; };
+			A7D1B6C0F3E4D2C1B9A80706 /* DiagnosticsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = A7D1B6C0F3E4D2C1B9A80705 /* DiagnosticsStore.swift */; };
+			A1B2C3D4E5F60718293A4B9A /* PolishPluralization.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B98 /* PolishPluralization.swift */; };
 			A1B2C3D4E5F60718293A4B97 /* VoiceOverScrollBarPrimer.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B96 /* VoiceOverScrollBarPrimer.swift */; };
 			BE1FDCD428F6DE7D00B9601B /* DataController.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE1FDCD328F6DE7D00B9601B /* DataController.swift */; };
 			A6FE8102C0FA7A26774E22AF /* FavoritesStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = CD18FC9FB6494384932AF3BD /* FavoritesStore.swift */; };
@@ -32,6 +34,7 @@
 		6E8B3030010D97CFDCD59665 /* LazyDetailedPodcastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 9646723B6391FE47334552EF /* LazyDetailedPodcastView.swift */; };
 		DD8D357EC14072F7B8DCB985 /* LazyDetailedArticleView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D5AFB1327CD2EA8E255044E9 /* LazyDetailedArticleView.swift */; };
 		BE56ED2F290B3BE9006ADF67 /* DetailedPodcastView.swift in Sources */ = {isa = PBXBuildFile; fileRef = BE56ED2E290B3BE9006ADF67 /* DetailedPodcastView.swift */; };
+		B6F00F376D973639821752CC /* PodcastCommentsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 728859B2796B1E24D2C779FB /* PodcastCommentsView.swift */; };
 		FC1F7CD5BB2E35CBF0F19C55 /* SettingsStore.swift in Sources */ = {isa = PBXBuildFile; fileRef = 4283FEFC63F0CD0E873A0000 /* SettingsStore.swift */; };
 		A1B2C3D4E5F60718293A4B72 /* PushNotificationPreferences.swift in Sources */ = {isa = PBXBuildFile; fileRef = A1B2C3D4E5F60718293A4B71 /* PushNotificationPreferences.swift */; };
 		7067CBBE80C46D1FB6DFBDB0 /* SettingsView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C6D07EF7B77E90D3593AD699 /* SettingsView.swift */; };
@@ -117,9 +120,11 @@
 		C0FFEE1234567890ABCDEF12 /* MultipartFormDataBuilderTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MultipartFormDataBuilderTests.swift; sourceTree = "<group>"; };
 		A1B2C3D4E5F60718293A4B5E /* TyflocentrumUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TyflocentrumUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A1B2C3D4E5F60718293A4B5F /* TyflocentrumSmokeTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TyflocentrumSmokeTests.swift; sourceTree = "<group>"; };
+		A1B2C3D4E5F60718293A4B98 /* PolishPluralization.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PolishPluralization.swift; sourceTree = "<group>"; };
 			BE05F01029001CCA009069F7 /* TyfloAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TyfloAPI.swift; sourceTree = "<group>"; };
 			A1B2C3D4E5F60718293A4B8F /* DeviceCapabilities.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DeviceCapabilities.swift; sourceTree = "<group>"; };
 			A1B2C3D4E5F60718293A4B94 /* Logging.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Logging.swift; sourceTree = "<group>"; };
+			A7D1B6C0F3E4D2C1B9A80705 /* DiagnosticsStore.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DiagnosticsStore.swift; sourceTree = "<group>"; };
 			A1B2C3D4E5F60718293A4B96 /* VoiceOverScrollBarPrimer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceOverScrollBarPrimer.swift; sourceTree = "<group>"; };
 			8E896DDBD6BB462F90335C66 /* ShowNotesParser.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ShowNotesParser.swift; sourceTree = "<group>"; };
 			D0C1B2A3F4E5D6C7B8A9F001 /* VoiceMessageRecorder.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = VoiceMessageRecorder.swift; sourceTree = "<group>"; };
@@ -129,6 +134,7 @@
 		D5AFB1327CD2EA8E255044E9 /* LazyDetailedArticleView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyDetailedArticleView.swift; sourceTree = "<group>"; };
 		9646723B6391FE47334552EF /* LazyDetailedPodcastView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LazyDetailedPodcastView.swift; sourceTree = "<group>"; };
 		BE56ED2E290B3BE9006ADF67 /* DetailedPodcastView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DetailedPodcastView.swift; sourceTree = "<group>"; };
+		728859B2796B1E24D2C779FB /* PodcastCommentsView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PodcastCommentsView.swift; sourceTree = "<group>"; };
 		BE64D6C12925A1F9001F9A45 /* AudioToolbox.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = AudioToolbox.framework; path = System/Library/Frameworks/AudioToolbox.framework; sourceTree = SDKROOT; };
 		BE64D6C62925A221001F9A45 /* CFNetwork.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CFNetwork.framework; path = System/Library/Frameworks/CFNetwork.framework; sourceTree = SDKROOT; };
 		BE64D6CA2925A296001F9A45 /* SystemConfiguration.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SystemConfiguration.framework; path = System/Library/Frameworks/SystemConfiguration.framework; sourceTree = SDKROOT; };
@@ -294,6 +300,7 @@
 				A363867AEA634D11B70C0B89 /* PodcastPlayerSheet.swift */,
 				BE890DFD29087659005D8DC7 /* ShortCategoryView.swift */,
 				BE56ED2E290B3BE9006ADF67 /* DetailedPodcastView.swift */,
+				728859B2796B1E24D2C779FB /* PodcastCommentsView.swift */,
 				BEB8A67A291CE49C00A2836F /* DetailedCategoryView.swift */,
 				BEA9ECD329204CD400718254 /* DetailedArticleCategoryView.swift */,
 				BEBAB45E292931BB009967A0 /* MediaPlayerView.swift */,
@@ -347,6 +354,8 @@
 					BEEA97B828E9D4BB0073E5AB /* TyflocentrumApp.swift */,
 					A1B2C3D4E5F60718293A4B8F /* DeviceCapabilities.swift */,
 					A1B2C3D4E5F60718293A4B94 /* Logging.swift */,
+					A7D1B6C0F3E4D2C1B9A80705 /* DiagnosticsStore.swift */,
+					A1B2C3D4E5F60718293A4B98 /* PolishPluralization.swift */,
 					8E896DDBD6BB462F90335C66 /* ShowNotesParser.swift */,
 					A9C0D1E2F3A4B5C6D7E8F901 /* MultipartFormDataBuilder.swift */,
 					BEA9ECD129203FD700718254 /* Views */,
@@ -515,6 +524,8 @@
 						89569C47430A8FD8DEB64AA7 /* AsyncTimeout.swift in Sources */,
 						A1B2C3D4E5F60718293A4B90 /* DeviceCapabilities.swift in Sources */,
 						A1B2C3D4E5F60718293A4B95 /* Logging.swift in Sources */,
+						A7D1B6C0F3E4D2C1B9A80706 /* DiagnosticsStore.swift in Sources */,
+						A1B2C3D4E5F60718293A4B9A /* PolishPluralization.swift in Sources */,
 						BE890DFE29087659005D8DC7 /* ShortCategoryView.swift in Sources */,
 						BE1FDCD428F6DE7D00B9601B /* DataController.swift in Sources */,
 						E3AC556226DF4E6EBF329B2D /* AccessibleTextView.swift in Sources */,
@@ -537,6 +548,7 @@
 				BE77EE8E29000B2C002087ED /* SearchView.swift in Sources */,
 				BEC9AB97292E56FF009907EB /* Schedule.swift in Sources */,
 				BE56ED2F290B3BE9006ADF67 /* DetailedPodcastView.swift in Sources */,
+				B6F00F376D973639821752CC /* PodcastCommentsView.swift in Sources */,
 				BEBAB45F292931BB009967A0 /* MediaPlayerView.swift in Sources */,
 				BEF5F7EE292E8BE20065E572 /* ContactResponse.swift in Sources */,
 				BE55421C28FD548300CC0128 /* NewsView.swift in Sources */,

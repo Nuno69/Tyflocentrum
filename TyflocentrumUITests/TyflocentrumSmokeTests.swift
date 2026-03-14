@@ -108,12 +108,8 @@ final class TyflocentrumSmokeTests: XCTestCase {
 
 		app.tabBars.buttons["Nowości"].tap()
 
-		let retryButton = app.descendants(matching: .any).matching(identifier: "news.retry").firstMatch
-		XCTAssertTrue(retryButton.waitForExistence(timeout: 8))
-		retryButton.tap()
-
 		let podcastRow = app.descendants(matching: .any).matching(identifier: "podcast.row.1").firstMatch
-		XCTAssertTrue(podcastRow.waitForExistence(timeout: 5))
+		XCTAssertTrue(podcastRow.waitForExistence(timeout: 10))
 	}
 
 	func testCanOpenRadioPlayerFromMoreTab() {
@@ -269,6 +265,9 @@ final class TyflocentrumSmokeTests: XCTestCase {
 		let speedButton = app.descendants(matching: .any).matching(identifier: "player.speed").firstMatch
 		XCTAssertTrue(speedButton.exists)
 		XCTAssertEqual(speedButton.label, "Zmień prędkość odtwarzania")
+
+		let airPlayButton = app.descendants(matching: .any).matching(identifier: "player.airplay").firstMatch
+		XCTAssertTrue(airPlayButton.waitForExistence(timeout: 5))
 	}
 
 	func testCanAddPodcastToFavoritesAndSeeItInFavorites() {
@@ -286,13 +285,172 @@ final class TyflocentrumSmokeTests: XCTestCase {
 
 		let favoriteButton = app.descendants(matching: .any).matching(identifier: "podcastDetail.favorite").firstMatch
 		XCTAssertTrue(favoriteButton.waitForExistence(timeout: 5))
+		XCTAssertEqual(favoriteButton.label, "Dodaj do ulubionych")
 		favoriteButton.tap()
+
+		let predicate = NSPredicate(format: "label == %@", "Usuń z ulubionych")
+		let waitExpectation = expectation(for: predicate, evaluatedWith: favoriteButton)
+		XCTAssertEqual(XCTWaiter().wait(for: [waitExpectation], timeout: 5), .completed)
 
 		openFavoritesFromMenu(in: app)
 
 		let favoritesPodcastRow = app.descendants(matching: .any).matching(identifier: "podcast.row.1").firstMatch
 		XCTAssertTrue(favoritesPodcastRow.waitForExistence(timeout: 5))
 		tapBackButton(in: app)
+	}
+
+	func testPodcastFavoritedFromRowCanBeUnfavoritedInDetail() {
+		let app = makeApp()
+		app.launch()
+
+		app.tabBars.buttons["Nowości"].tap()
+
+		let podcastRow = app.descendants(matching: .any).matching(identifier: "podcast.row.1").firstMatch
+		XCTAssertTrue(podcastRow.waitForExistence(timeout: 5))
+
+		podcastRow.press(forDuration: 1.0)
+
+		let addFavoriteButton = app.buttons["Dodaj do ulubionych"].firstMatch
+		let addFavoriteMenuItem = app.menuItems["Dodaj do ulubionych"].firstMatch
+		let addFavoriteElement: XCUIElement
+		if addFavoriteButton.waitForExistence(timeout: 2) {
+			addFavoriteElement = addFavoriteButton
+		} else {
+			XCTAssertTrue(addFavoriteMenuItem.waitForExistence(timeout: 2))
+			addFavoriteElement = addFavoriteMenuItem
+		}
+		addFavoriteElement.tap()
+
+		let menuDismissPredicate = NSPredicate(format: "exists == false")
+		let menuDismissExpectation = expectation(for: menuDismissPredicate, evaluatedWith: addFavoriteElement)
+		XCTAssertEqual(XCTWaiter().wait(for: [menuDismissExpectation], timeout: 5), .completed)
+
+		let podcastRowAfterFavorite = app.descendants(matching: .any).matching(identifier: "podcast.row.1").firstMatch
+		XCTAssertTrue(podcastRowAfterFavorite.waitForExistence(timeout: 5))
+		podcastRowAfterFavorite.tap()
+
+		let favoriteButton = app.descendants(matching: .any).matching(identifier: "podcastDetail.favorite").firstMatch
+		XCTAssertTrue(favoriteButton.waitForExistence(timeout: 5))
+		XCTAssertEqual(favoriteButton.label, "Usuń z ulubionych")
+		favoriteButton.tap()
+
+		let predicate = NSPredicate(format: "label == %@", "Dodaj do ulubionych")
+		let waitExpectation = expectation(for: predicate, evaluatedWith: favoriteButton)
+		XCTAssertEqual(XCTWaiter().wait(for: [waitExpectation], timeout: 5), .completed)
+
+		openFavoritesFromMenu(in: app)
+
+		let favoritesPodcastRow = app.descendants(matching: .any).matching(identifier: "podcast.row.1").firstMatch
+		XCTAssertFalse(favoritesPodcastRow.waitForExistence(timeout: 2))
+		tapBackButton(in: app)
+	}
+
+	func testPodcastDetailShowsCommentsAndCanOpenThem() {
+		let app = makeApp()
+		app.launch()
+
+		app.tabBars.buttons["Nowości"].tap()
+
+		let podcastRow = app.descendants(matching: .any).matching(identifier: "podcast.row.1").firstMatch
+		XCTAssertTrue(podcastRow.waitForExistence(timeout: 5))
+		podcastRow.tap()
+
+		let commentsSummary = app.descendants(matching: .any).matching(identifier: "podcastDetail.commentsSummary").firstMatch
+		XCTAssertTrue(commentsSummary.waitForExistence(timeout: 5))
+
+		let predicate = NSPredicate(format: "label == %@", "2 komentarze")
+		let waitExpectation = expectation(for: predicate, evaluatedWith: commentsSummary)
+		XCTAssertEqual(XCTWaiter().wait(for: [waitExpectation], timeout: 5), .completed)
+
+		commentsSummary.tap()
+
+		let commentsList = app.descendants(matching: .any).matching(identifier: "comments.list").firstMatch
+		XCTAssertTrue(commentsList.waitForExistence(timeout: 5))
+
+		let commentRow = app.descendants(matching: .any).matching(identifier: "comment.row.1001").firstMatch
+		XCTAssertTrue(commentRow.waitForExistence(timeout: 5))
+		commentRow.tap()
+
+		let commentContent = app.descendants(matching: .any).matching(identifier: "comment.content").firstMatch
+		XCTAssertTrue(commentContent.waitForExistence(timeout: 5))
+	}
+
+	func testPodcastDetailActionsWorkWithLargeContent() {
+		let app = makeApp(additionalLaunchArguments: ["UI_TESTING_LARGE_PODCAST_CONTENT"])
+		app.launch()
+
+		app.tabBars.buttons["Nowości"].tap()
+
+		let podcastRow = app.descendants(matching: .any).matching(identifier: "podcast.row.1").firstMatch
+		XCTAssertTrue(podcastRow.waitForExistence(timeout: 5))
+		podcastRow.tap()
+
+		let favoriteButton = app.descendants(matching: .any).matching(identifier: "podcastDetail.favorite").firstMatch
+		XCTAssertTrue(favoriteButton.waitForExistence(timeout: 5))
+		favoriteButton.tap()
+
+		let favoritePredicate = NSPredicate(format: "label == %@", "Usuń z ulubionych")
+		let favoriteWaitExpectation = expectation(for: favoritePredicate, evaluatedWith: favoriteButton)
+		XCTAssertEqual(XCTWaiter().wait(for: [favoriteWaitExpectation], timeout: 5), .completed)
+
+		let commentsSummary = app.descendants(matching: .any).matching(identifier: "podcastDetail.commentsSummary").firstMatch
+		XCTAssertTrue(commentsSummary.waitForExistence(timeout: 5))
+
+		let commentsPredicate = NSPredicate(format: "label == %@", "2 komentarze")
+		let commentsWaitExpectation = expectation(for: commentsPredicate, evaluatedWith: commentsSummary)
+		XCTAssertEqual(XCTWaiter().wait(for: [commentsWaitExpectation], timeout: 5), .completed)
+	}
+
+	func testFavoriteTopicPlayActionOpensPlayer() {
+		let app = makeApp()
+		app.launch()
+
+		app.tabBars.buttons["Nowości"].tap()
+
+		let podcastRow = app.descendants(matching: .any).matching(identifier: "podcast.row.1").firstMatch
+		XCTAssertTrue(podcastRow.waitForExistence(timeout: 5))
+		podcastRow.tap()
+
+		let listenButton = app.descendants(matching: .any).matching(identifier: "podcastDetail.listen").firstMatch
+		XCTAssertTrue(listenButton.waitForExistence(timeout: 5))
+		listenButton.tap()
+
+		let markersButton = app.descendants(matching: .any).matching(identifier: "player.showChapterMarkers").firstMatch
+		XCTAssertTrue(markersButton.waitForExistence(timeout: 5))
+		markersButton.tap()
+
+		let introMarker = app.buttons["Intro"].firstMatch
+		XCTAssertTrue(introMarker.waitForExistence(timeout: 5))
+		introMarker.press(forDuration: 1.0)
+
+		let addFavorite = app.buttons["Dodaj do ulubionych"].firstMatch
+		XCTAssertTrue(addFavorite.waitForExistence(timeout: 5))
+		addFavorite.tap()
+
+		tapBackButton(in: app)
+		tapBackButton(in: app)
+
+		openFavoritesFromMenu(in: app)
+
+		let filter = app.segmentedControls["favorites.filter"]
+		XCTAssertTrue(filter.waitForExistence(timeout: 5))
+		filter.buttons["Tematy"].tap()
+
+		let topicRow = app.descendants(matching: .any).matching(identifier: "favorites.topic.1.0").firstMatch
+		XCTAssertTrue(topicRow.waitForExistence(timeout: 5))
+		topicRow.press(forDuration: 1.0)
+
+		let playButton = app.buttons["Odtwarzaj od tego miejsca"].firstMatch
+		let playMenuItem = app.menuItems["Odtwarzaj od tego miejsca"].firstMatch
+		if playButton.waitForExistence(timeout: 2) {
+			playButton.tap()
+		} else {
+			XCTAssertTrue(playMenuItem.waitForExistence(timeout: 2))
+			playMenuItem.tap()
+		}
+
+		let playPauseButton = app.descendants(matching: .any).matching(identifier: "player.playPause").firstMatch
+		XCTAssertTrue(playPauseButton.waitForExistence(timeout: 5))
 	}
 
 	func testCanAddArticleToFavoritesAndFilterIt() {
@@ -307,6 +465,9 @@ final class TyflocentrumSmokeTests: XCTestCase {
 
 		let content = app.descendants(matching: .any).matching(identifier: "articleDetail.content").firstMatch
 		XCTAssertTrue(content.waitForExistence(timeout: 5))
+
+		let shareButton = app.descendants(matching: .any).matching(identifier: "articleDetail.share").firstMatch
+		XCTAssertTrue(shareButton.waitForExistence(timeout: 5))
 
 		let favoriteButton = app.descendants(matching: .any).matching(identifier: "articleDetail.favorite").firstMatch
 		XCTAssertTrue(favoriteButton.waitForExistence(timeout: 5))

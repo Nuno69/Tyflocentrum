@@ -36,9 +36,7 @@ struct DetailedArticleView: View {
 	}
 
 	private func toggleFavorite() {
-		let willAdd = !favorites.isFavorite(favoriteItem)
 		favorites.toggle(favoriteItem)
-		announceIfVoiceOver(willAdd ? "Dodano do ulubionych." : "Usunięto z ulubionych.")
 	}
 
 	var body: some View {
@@ -55,6 +53,16 @@ struct DetailedArticleView: View {
 			.accessibilityAddTraits(.isHeader)
 			.accessibilityIdentifier("articleDetail.header")
 			.padding([.horizontal, .top])
+
+			ShareLink(
+				item: article.guid.plainText,
+				subject: Text(article.title.plainText),
+				message: Text("Udostępnione przy pomocy aplikacji Tyflocentrum")
+			) {
+				Label("Udostępnij", systemImage: "square.and.arrow.up")
+			}
+			.padding(.horizontal)
+			.accessibilityIdentifier("articleDetail.share")
 
 			SafeHTMLView(
 				htmlBody: article.content.rendered,

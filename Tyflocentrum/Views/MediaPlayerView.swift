@@ -5,6 +5,7 @@
 //  Created by Arkadiusz Świętnicki on 19/11/2022.
 //
 
+import AVKit
 import Foundation
 import SwiftUI
 import UIKit
@@ -33,6 +34,7 @@ struct MediaPlayerView: View {
 	let subtitle: String?
 	let canBeLive: Bool
 	let podcastPostID: Int?
+	let initialSeekTo: Double?
 	@State private var shouldNavigateToContact = false
 	@State private var shouldShowNoLiveAlert = false
 	@State private var isScrubbing = false
@@ -45,12 +47,20 @@ struct MediaPlayerView: View {
 	@State private var shouldShowChapterMarkers = false
 	@State private var shouldShowRelatedLinks = false
 
-	init(podcast: URL, title: String, subtitle: String?, canBeLive: Bool, podcastPostID: Int? = nil) {
+	init(
+		podcast: URL,
+		title: String,
+		subtitle: String?,
+		canBeLive: Bool,
+		podcastPostID: Int? = nil,
+		initialSeekTo: Double? = nil
+	) {
 		self.podcast = podcast
 		self.title = title
 		self.subtitle = subtitle
 		self.canBeLive = canBeLive
 		self.podcastPostID = podcastPostID
+		self.initialSeekTo = initialSeekTo
 	}
 
 	private func loadShowNotes() async {
@@ -286,11 +296,18 @@ struct MediaPlayerView: View {
 		}
 		.padding()
 		.navigationTitle("Odtwarzacz")
+		.toolbar {
+			ToolbarItem(placement: .navigationBarTrailing) {
+				AirPlayRoutePickerButton()
+					.frame(width: 32, height: 32)
+					.accessibilityIdentifier("player.airplay")
+			}
+		}
 		.onAppear {
 			guard !ProcessInfo.processInfo.arguments.contains("UI_TESTING") else { return }
 			guard !didAutoStartPlayback else { return }
 			didAutoStartPlayback = true
-			audioPlayer.play(url: podcast, title: title, subtitle: subtitle, isLiveStream: canBeLive)
+			audioPlayer.play(url: podcast, title: title, subtitle: subtitle, isLiveStream: canBeLive, seekTo: initialSeekTo)
 		}
 		.task(id: podcastPostID) {
 			await loadShowNotes()
@@ -348,6 +365,51 @@ struct MediaPlayerView: View {
 	}
 }
 
+private struct AirPlayRoutePickerButton: UIViewRepresentable {
+	func makeUIView(context _: Context) -> AVRoutePickerView {
+		let routePicker = AVRoutePickerView()
+		routePicker.prioritizesVideoDevices = false
+		routePicker.backgroundColor = .clear
+		routePicker.tintColor = UIColor.label
+		routePicker.activeTintColor = UIColor.label
+		configureAccessibility(for: routePicker)
+		return routePicker
+	}
+
+	func updateUIView(_ uiView: AVRoutePickerView, context _: Context) {
+		configureAccessibility(for: uiView)
+	}
+
+	private func configureAccessibility(for picker: AVRoutePickerView) {
+		let identifier = "player.airplay"
+
+		picker.isAccessibilityElement = true
+		picker.accessibilityIdentifier = identifier
+		picker.accessibilityLabel = "AirPlay"
+		picker.accessibilityHint = "Wybierz urządzenie do odtwarzania."
+		picker.accessibilityTraits.insert(.button)
+
+		if let button = findFirstButton(in: picker) {
+			button.accessibilityIdentifier = identifier
+			button.accessibilityLabel = "AirPlay"
+			button.accessibilityHint = "Wybierz urządzenie do odtwarzania."
+			button.accessibilityTraits.insert(.button)
+		}
+	}
+
+	private func findFirstButton(in view: UIView) -> UIButton? {
+		if let button = view as? UIButton {
+			return button
+		}
+		for subview in view.subviews {
+			if let button = findFirstButton(in: subview) {
+				return button
+			}
+		}
+		return nil
+	}
+}
+
 private struct ChapterMarkersView: View {
 	let podcastID: Int
 	let podcastTitle: String
@@ -377,9 +439,7 @@ private struct ChapterMarkersView: View {
 	}
 
 	private func toggleFavorite(_ item: FavoriteItem) {
-		let willAdd = !favorites.isFavorite(item)
 		favorites.toggle(item)
-		announceIfVoiceOver(willAdd ? "Dodano do ulubionych." : "Usunięto z ulubionych.")
 	}
 
 	var body: some View {
@@ -475,62 +535,71 @@ private struct RelatedLinksView: View {
 	}
 
 	private func toggleFavorite(_ item: FavoriteItem) {
-		let willAdd = !favorites.isFavorite(item)
 		favorites.toggle(item)
-		announceIfVoiceOver(willAdd ? "Dodano do ulubionych." : "Usunięto z ulubionych.")
 	}
 
 	var body: some View {
 		List(links) { link in
 			let item = favoriteItem(for: link)
-			Button {
-				openURL(link.url)
-			} label: {
-				VStack(alignment: .leading, spacing: 4) {
-					Text(link.title)
-						.foregroundColor(.primary)
-
-					if let host = hostLabel(for: link.url) {
-						Text(host)
-							.font(.caption)
-							.foregroundColor(.secondary)
-					}
-				}
-			}
-			.buttonStyle(.plain)
-			.tint(.primary)
-			.contextMenu {
-				Button("Skopiuj link") {
-					copyLink(link)
-				}
-				Button("Udostępnij link") {
-					sharePayload = SharePayload(activityItems: [activityItem(for: link.url)])
-				}
-				Button(favorites.isFavorite(item) ? "Usuń z ulubionych" : "Dodaj do ulubionych") {
-					toggleFavorite(item)
-				}
-			}
-			.accessibilityElement(children: .ignore)
-			.accessibilityLabel(link.title)
-			.accessibilityValue(hostLabel(for: link.url) ?? "")
-			.accessibilityAddTraits(.isLink)
-			.accessibilityRemoveTraits(.isButton)
-			.accessibilityHint("Otwiera odnośnik.")
-			.accessibilityAction(named: "Skopiuj link") {
-				copyLink(link)
-			}
-			.accessibilityAction(named: "Udostępnij link") {
-				sharePayload = SharePayload(activityItems: [activityItem(for: link.url)])
-			}
-			.accessibilityAction(named: favorites.isFavorite(item) ? "Usuń z ulubionych" : "Dodaj do ulubionych") {
-				toggleFavorite(item)
-			}
+			RelatedLinkRowView(
+				title: link.title,
+				host: hostLabel(for: link.url),
+				isFavorite: favorites.isFavorite(item),
+				onOpen: { openURL(link.url) },
+				onCopy: { copyLink(link) },
+				onShare: { sharePayload = SharePayload(activityItems: [activityItem(for: link.url)]) },
+				onToggleFavorite: { toggleFavorite(item) }
+			)
 		}
 		.navigationTitle("Odnośniki")
 		.navigationBarTitleDisplayMode(.inline)
 		.sheet(item: $sharePayload) { payload in
 			ActivityView(activityItems: payload.activityItems)
 		}
+	}
+}
+
+private struct RelatedLinkRowView: View {
+	let title: String
+	let host: String?
+	let isFavorite: Bool
+	let onOpen: () -> Void
+	let onCopy: () -> Void
+	let onShare: () -> Void
+	let onToggleFavorite: () -> Void
+
+	var body: some View {
+		let hostValue = host ?? ""
+		let favoriteTitle = isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"
+
+		return Button(action: onOpen) {
+			VStack(alignment: .leading, spacing: 4) {
+				Text(title)
+					.foregroundColor(.primary)
+
+				if !hostValue.isEmpty {
+					Text(hostValue)
+						.font(.caption)
+						.foregroundColor(.secondary)
+				}
+			}
+		}
+		.buttonStyle(.plain)
+		.tint(.primary)
+		.contextMenu {
+			Button("Skopiuj link", action: onCopy)
+			Button("Udostępnij link", action: onShare)
+			Button(favoriteTitle, action: onToggleFavorite)
+		}
+		.accessibilityElement(children: .ignore)
+		.accessibilityLabel(title)
+		.accessibilityValue(hostValue)
+		.accessibilityAddTraits(.isLink)
+		.accessibilityRemoveTraits(.isButton)
+		.accessibilityHint("Otwiera odnośnik.")
+		.accessibilityAction(named: "Skopiuj link", onCopy)
+		.accessibilityAction(named: "Udostępnij link", onShare)
+		.accessibilityAction(named: favoriteTitle, onToggleFavorite)
 	}
 }
 

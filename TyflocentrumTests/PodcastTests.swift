@@ -32,6 +32,12 @@ final class PodcastTests: XCTestCase {
 		XCTAssertEqual(title.plainText, "Ala & kot")
 	}
 
+	func testPlainTextDecodesHTMLEntitiesInLargeHTML() {
+		let html = String(repeating: "<p>Ala &amp; kot</p>", count: 2000)
+		let title = Podcast.PodcastTitle(rendered: html)
+		XCTAssertTrue(title.plainText.contains("Ala & kot"))
+	}
+
 	func testPlainTextTrimsWhitespaceWhenAlreadyPlain() {
 		let title = Podcast.PodcastTitle(rendered: "  Ala ma kota  ")
 		XCTAssertEqual(title.plainText, "Ala ma kota")

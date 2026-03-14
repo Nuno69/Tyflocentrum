@@ -32,7 +32,9 @@ final class FavoritesStore: ObservableObject {
 
 	func add(_ item: FavoriteItem) {
 		guard knownIDs.insert(item.id).inserted else { return }
-		items.insert(item, at: 0)
+		var updated = items
+		updated.insert(item, at: 0)
+		items = updated
 		persist()
 	}
 
@@ -42,7 +44,7 @@ final class FavoritesStore: ObservableObject {
 
 	func remove(id: String) {
 		guard knownIDs.remove(id) != nil else { return }
-		items.removeAll(where: { $0.id == id })
+		items = items.filter { $0.id != id }
 		persist()
 	}
 

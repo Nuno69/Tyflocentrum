@@ -166,6 +166,7 @@ final class NewsFeedViewModel: ObservableObject {
 	private let sourcePerPage: Int
 	private let initialBatchSize: Int
 	private let loadMoreBatchSize: Int
+	private var requestGeneration = UUID()
 
 	private var podcasts = SourceState(kind: .podcast)
 	private var articles = SourceState(kind: .article)
@@ -194,28 +195,78 @@ final class NewsFeedViewModel: ObservableObject {
 
 	func refresh(api: TyfloAPI) async {
 		guard !isLoading else { return }
-		reset()
+
+		let generation = UUID()
+		requestGeneration = generation
 
 		isLoading = true
-		defer { isLoading = false }
-
+		isLoadingMore = false
 		errorMessage = nil
+		loadMoreErrorMessage = nil
 
-		await appendNextBatch(api: api, batchSize: initialBatchSize)
-		hasLoaded = true
+		let previousHasLoaded = hasLoaded
+		let hadItemsBeforeRefresh = !items.isEmpty
+		defer {
+			if requestGeneration == generation {
+				hasLoaded = previousHasLoaded || hasLoaded
+				isLoading = false
 
-		if items.isEmpty {
-			errorMessage = "Nie udało się pobrać danych. Spróbuj ponownie."
+				// Never leave the user on an empty state without a retry path – in practice, the feed should never
+				// be truly empty, and cancellations/errors would otherwise surface as “Brak nowych treści.”
+				if items.isEmpty, errorMessage == nil, hasLoaded, !Task.isCancelled {
+					errorMessage = "Nie udało się pobrać danych. Spróbuj ponownie."
+				}
+			}
 		}
+
+		let scratch = NewsFeedViewModel(
+			requestTimeoutSeconds: requestTimeoutSeconds,
+			sourcePerPage: sourcePerPage,
+			initialBatchSize: initialBatchSize,
+			loadMoreBatchSize: loadMoreBatchSize
+		)
+		await scratch.performRefreshInPlace(api: api)
+
+		guard requestGeneration == generation else { return }
+		if Task.isCancelled {
+			if !hadItemsBeforeRefresh {
+				errorMessage = "Nie udało się pobrać danych. Spróbuj ponownie."
+				hasLoaded = true
+			}
+			return
+		}
+
+		if scratch.items.isEmpty {
+			errorMessage = scratch.errorMessage ?? "Nie udało się pobrać danych. Spróbuj ponownie."
+			hasLoaded = true
+		} else {
+			items = scratch.items
+			hasLoaded = true
+			canLoadMore = scratch.canLoadMore
+			loadMoreErrorMessage = scratch.loadMoreErrorMessage
+
+			podcasts = scratch.podcasts
+			articles = scratch.articles
+			seenIDs = scratch.seenIDs
+		}
+
+		// If the user triggers "load more" during refresh, `loadMore(api:)` will wait for `isLoading` to clear
+		// instead of scheduling a separate follow-up task here. This avoids flakey overlaps and keeps the state
+		// transitions deterministic (important for accessibility and tests).
 	}
 
 	func loadMore(api: TyfloAPI) async {
+		while isLoading {
+			guard !Task.isCancelled else { return }
+			await Task.yield()
+		}
 		guard hasLoaded else {
 			await loadIfNeeded(api: api)
 			return
 		}
 		guard canLoadMore else { return }
 		guard !isLoadingMore else { return }
+		let generation = requestGeneration
 
 		isLoadingMore = true
 		defer { isLoadingMore = false }
@@ -223,20 +274,54 @@ final class NewsFeedViewModel: ObservableObject {
 		loadMoreErrorMessage = nil
 
 		let initialCount = items.count
-		await appendNextBatch(api: api, batchSize: loadMoreBatchSize)
+		await appendNextBatch(api: api, batchSize: loadMoreBatchSize, generation: generation)
+		guard requestGeneration == generation else { return }
 
 		if items.count == initialCount, canLoadMore {
 			loadMoreErrorMessage = "Nie udało się pobrać kolejnych treści. Spróbuj ponownie."
 		}
 	}
 
-	private func reset() {
+	private func performRefreshInPlace(api: TyfloAPI) async {
+		guard !isLoading else { return }
+		resetForNewRequest()
+		let generation = requestGeneration
+
+		isLoading = true
+
+		errorMessage = nil
+		defer {
+			if requestGeneration == generation {
+				hasLoaded = true
+				isLoading = false
+
+				if items.isEmpty, !Task.isCancelled {
+					errorMessage = "Nie udało się pobrać danych. Spróbuj ponownie."
+				}
+			}
+		}
+
+		await appendNextBatch(api: api, batchSize: initialBatchSize, generation: generation)
+		guard requestGeneration == generation else { return }
+
+		if items.isEmpty {
+			// The initial merge fetch may fail transiently (e.g. timeouts/cancelled requests). Retry once to
+			// avoid forcing the user to hit “Spróbuj ponownie” in common cases.
+			try? await Task.sleep(nanoseconds: 250_000_000)
+			guard requestGeneration == generation else { return }
+			await appendNextBatch(api: api, batchSize: initialBatchSize, generation: generation)
+		}
+	}
+
+	private func resetForNewRequest() {
+		requestGeneration = UUID()
 		items.removeAll(keepingCapacity: true)
 		seenIDs.removeAll(keepingCapacity: true)
 		podcasts.reset()
 		articles.reset()
 		canLoadMore = false
 		hasLoaded = false
+		isLoadingMore = false
 		errorMessage = nil
 		loadMoreErrorMessage = nil
 	}
@@ -288,21 +373,26 @@ final class NewsFeedViewModel: ObservableObject {
 		}
 	}
 
-	private func fetchNextPodcastPage(api: TyfloAPI) async -> Bool {
+	private func fetchNextPodcastPage(api: TyfloAPI, generation: UUID) async -> Bool {
+		guard requestGeneration == generation else { return false }
 		var source = podcasts
 		let result = await fetchNextPage(api: api, source: &source)
+		guard requestGeneration == generation else { return false }
 		podcasts = source
 		return result
 	}
 
-	private func fetchNextArticlePage(api: TyfloAPI) async -> Bool {
+	private func fetchNextArticlePage(api: TyfloAPI, generation: UUID) async -> Bool {
+		guard requestGeneration == generation else { return false }
 		var source = articles
 		let result = await fetchNextPage(api: api, source: &source)
+		guard requestGeneration == generation else { return false }
 		articles = source
 		return result
 	}
 
-	private func appendNextBatch(api: TyfloAPI, batchSize: Int) async {
+	private func appendNextBatch(api: TyfloAPI, batchSize: Int, generation: UUID) async {
+		guard requestGeneration == generation else { return }
 		podcasts.didFailLastFetch = false
 		articles.didFailLastFetch = false
 
@@ -314,6 +404,7 @@ final class NewsFeedViewModel: ObservableObject {
 
 		while added < batchSize {
 			guard !Task.isCancelled else { return }
+			guard requestGeneration == generation else { return }
 
 			iterations += 1
 			if iterations > maxIterations { break }
@@ -322,12 +413,15 @@ final class NewsFeedViewModel: ObservableObject {
 			let articleNext = articles.nextItem
 
 			if podcastNext == nil, podcasts.hasMore {
-				_ = await fetchNextPodcastPage(api: api)
+				_ = await fetchNextPodcastPage(api: api, generation: generation)
+				guard requestGeneration == generation else { return }
 			}
 			if articleNext == nil, articles.hasMore {
-				_ = await fetchNextArticlePage(api: api)
+				_ = await fetchNextArticlePage(api: api, generation: generation)
+				guard requestGeneration == generation else { return }
 			}
 
+			guard requestGeneration == generation else { return }
 			guard let selected = selectNextItem() else { break }
 
 			let item = NewsItem(kind: selected.kind, post: selected.post)
@@ -336,10 +430,12 @@ final class NewsFeedViewModel: ObservableObject {
 				added += 1
 			}
 
+			guard requestGeneration == generation else { return }
 			podcasts.trimConsumedIfNeeded()
 			articles.trimConsumedIfNeeded()
 		}
 
+		guard requestGeneration == generation else { return }
 		if !newItems.isEmpty {
 			items.append(contentsOf: newItems)
 		}

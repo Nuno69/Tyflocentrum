@@ -1,3 +1,4 @@
+import Combine
 import Foundation
 import XCTest
 
@@ -87,5 +88,23 @@ final class FavoritesStoreTests: XCTestCase {
 		XCTAssertEqual(store.filtered(.articles).count, 1)
 		XCTAssertEqual(store.filtered(.topics).count, 1)
 		XCTAssertEqual(store.filtered(.links).count, 1)
+	}
+
+	func testItemsPublisherEmitsOnToggle() async {
+		let defaults = makeDefaults()
+		let store = FavoritesStore(userDefaults: defaults, storageKey: "favorites.test")
+
+		let item = FavoriteItem.podcast(makeSummary(id: 1))
+
+		var counts: [Int] = []
+		let cancellable = store.$items
+			.dropFirst()
+			.sink { counts.append($0.count) }
+
+		store.toggle(item)
+		store.toggle(item)
+
+		XCTAssertEqual(counts, [1, 0])
+		cancellable.cancel()
 	}
 }

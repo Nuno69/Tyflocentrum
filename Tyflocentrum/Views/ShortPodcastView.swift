@@ -34,9 +34,7 @@ struct ShortPodcastView: View {
 	}
 
 	private func toggleFavorite(_ item: FavoriteItem) {
-		let willAdd = !favorites.isFavorite(item)
 		favorites.toggle(item)
-		announceIfVoiceOver(willAdd ? "Dodano do ulubionych." : "Usunięto z ulubionych.")
 	}
 
 	var body: some View {

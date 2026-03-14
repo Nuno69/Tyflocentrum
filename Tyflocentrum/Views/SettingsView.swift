@@ -5,6 +5,9 @@ struct SettingsView: View {
 	@EnvironmentObject private var settings: SettingsStore
 	@EnvironmentObject private var audioPlayer: AudioPlayer
 	@EnvironmentObject private var pushNotifications: PushNotificationsManager
+	@EnvironmentObject private var diagnostics: DiagnosticsStore
+
+	@State private var sharePayload: SharePayload?
 
 	private func pushAuthorizationTitle(_ status: UNAuthorizationStatus) -> String {
 		switch status {
@@ -117,6 +120,30 @@ struct SettingsView: View {
 					}
 				}
 			#endif
+
+			Section("Diagnostyka") {
+				Toggle("Zbieraj log diagnostyczny", isOn: $diagnostics.isEnabled)
+					.accessibilityHint("Umożliwia udostępnienie logu z iPhone bez Xcode.")
+					.accessibilityIdentifier("settings.diagnostics.enabled")
+
+				Button("Udostępnij log") {
+					sharePayload = SharePayload(activityItems: [diagnostics.exportText()])
+				}
+				.disabled(!diagnostics.isEnabled || diagnostics.entries.isEmpty)
+				.accessibilityHint("Otwiera udostępnianie logu diagnostycznego.")
+				.accessibilityIdentifier("settings.diagnostics.share")
+
+				Button("Wyczyść log") {
+					diagnostics.clear()
+				}
+				.disabled(diagnostics.entries.isEmpty)
+				.accessibilityHint("Usuwa zapisane wpisy diagnostyczne.")
+				.accessibilityIdentifier("settings.diagnostics.clear")
+
+				Text("Wpisy: \(diagnostics.entries.count)")
+					.foregroundColor(.secondary)
+					.accessibilityIdentifier("settings.diagnostics.count")
+			}
 		}
 		.onChange(of: settings.playbackRateRememberMode) { _ in
 			audioPlayer.applyPlaybackRateRememberModeChange()
@@ -124,5 +151,8 @@ struct SettingsView: View {
 		.navigationTitle("Ustawienia")
 		.navigationBarTitleDisplayMode(.inline)
 		.accessibilityIdentifier("settings.view")
+		.sheet(item: $sharePayload) { payload in
+			ActivityView(activityItems: payload.activityItems)
+		}
 	}
 }

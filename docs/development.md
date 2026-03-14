@@ -8,6 +8,15 @@
 - `docs/` — dokumentacja (README jest celowo krótkie)
 - `scripts/` — skrypty pomocnicze (np. pobieranie `.ipa` z CI)
 
+## CI (build IPA)
+
+- Unsigned IPA: `.github/workflows/ios-unsigned-ipa.yml` (GitHub-hosted `macos-14`)
+  - lint: `swiftformat --lint`
+  - test: `xcodebuild test` (Simulator)
+  - build: artifact `Tyflocentrum-unsigned-ipa` (`tyflocentrum.ipa`)
+- Skrypt używany przez workflow: `scripts/build-unsigned-ipa.sh`
+- Pobranie artifactu: `scripts/fetch-ipa.sh` (albo UI GitHub Actions)
+
 ## Najważniejsze entrypointy
 
 - Start appki: `Tyflocentrum/TyflocentrumApp.swift`
