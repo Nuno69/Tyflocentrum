@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 struct Category: Codable, Identifiable {
 	var name: String
 	var id: Int

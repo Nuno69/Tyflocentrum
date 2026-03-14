@@ -1,0 +1,19 @@
+name: Docs (README) guard
+
+on:
+  pull_request:
+    branches: ["master"]
+
+jobs:
+  require-readme:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Require README update
+        run: |
+          bash scripts/require-readme-update.sh \
+            "${{ github.event.pull_request.base.sha }}" \
+            "${{ github.sha }}"

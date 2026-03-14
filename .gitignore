@@ -1,0 +1,12 @@
+# Local helpers
+artifacts/
+installers/
+.gh-cache/
+.gh-artifacts/
+.artifacts/
+
+# Xcode / iOS
+DerivedData/
+*.ipa
+*.dSYM
+*.dSYM.zip

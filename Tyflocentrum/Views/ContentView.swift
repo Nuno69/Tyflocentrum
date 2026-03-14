@@ -4,11 +4,9 @@
 //
 //  Created by Arkadiusz Świętnicki on 02/10/2022.
 //
-import AVFoundation
 import SwiftUI
 
 struct ContentView: View {
-	@StateObject var api = TyfloAPI.shared
 	var body: some View {
 		TabView {
 			NewsView().tabItem {
@@ -28,17 +26,9 @@ struct ContentView: View {
 				Image(systemName: "magnifyingglass")
 			}.tag("Search")
 			MoreView().tabItem {
-				Text("Więcej")
-				Image(systemName: "table.badge.more")
-			}.tag("More")
-		}.onAppear {
-			do {
-				try AVAudioSession.sharedInstance().setCategory(.playback)
-				try AVAudioSession.sharedInstance().setActive(true)
-			}
-			catch {
-				print("An error occurred during initialization of the audio system\n\(error.localizedDescription)")
-			}
+				Text("Tyfloradio")
+				Image(systemName: "dot.radiowaves.left.and.right")
+			}.tag("Tyfloradio")
 		}
 	}
 }

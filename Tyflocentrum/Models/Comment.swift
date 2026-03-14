@@ -6,10 +6,12 @@
 //
 
 import Foundation
+
 struct Comment: Codable, Identifiable {
 	struct CommentContent: Codable {
 		let rendered: String
 	}
+
 	let id: Int
 	let post: Int
 	let parent: Int

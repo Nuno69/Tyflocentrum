@@ -6,6 +6,7 @@
 //
 
 import Foundation
+
 struct ContactResponse: Codable {
 	let author: String
 	let comment: String
