@@ -204,7 +204,7 @@ struct ContactVoiceMessageView: View {
 			disableProximityMonitoring()
 			resetRecording()
 		}
-		.onChange(of: isEarModeEnabled) { enabled in
+		.onChange(of: isEarModeEnabled) { _, enabled in
 			guard supportsEarMode else {
 				isEarModeEnabled = false
 				return

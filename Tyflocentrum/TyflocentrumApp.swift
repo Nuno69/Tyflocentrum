@@ -79,12 +79,12 @@ struct TyflocentrumApp: App {
 				await pushNotifications.refreshAuthorizationStatus()
 			}
 			#if DEBUG
-			.onChange(of: settingsStore.pushNotificationPreferences) { prefs in
-					guard !isUITesting else { return }
-					Task {
-						await pushNotifications.onPreferencesChanged(prefs: prefs)
-					}
+			.onChange(of: settingsStore.pushNotificationPreferences) { _, prefs in
+				guard !isUITesting else { return }
+				Task {
+					await pushNotifications.onPreferencesChanged(prefs: prefs)
 				}
+			}
 			#endif
 		}
 	}

@@ -73,28 +73,9 @@ struct DetailedCategoryView: View {
 		}
 		.navigationTitle(category.name)
 		.navigationBarTitleDisplayMode(.inline)
-		.background(
-			NavigationLink(
-				destination: Group {
-					if let podcast = playerPodcast {
-						PodcastPlayerView(podcast: podcast)
-					} else {
-						EmptyView()
-					}
-				},
-				isActive: Binding(
-					get: { playerPodcast != nil },
-					set: { isActive in
-						if !isActive {
-							playerPodcast = nil
-						}
-					}
-				)
-			) {
-				EmptyView()
-			}
-			.hidden()
-		)
+		.navigationDestination(item: $playerPodcast) { podcast in
+			PodcastPlayerView(podcast: podcast)
+		}
 	}
 
 	private func fetchPage(page: Int, perPage: Int) async throws -> TyfloAPI.WPPage<WPPostSummary> {

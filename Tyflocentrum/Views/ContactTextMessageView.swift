@@ -73,7 +73,7 @@ struct ContactTextMessageView: View {
 		.task {
 			focusedField = .name
 		}
-		.onChange(of: viewModel.shouldShowError) { shouldShowError in
+		.onChange(of: viewModel.shouldShowError) { _, shouldShowError in
 			guard !shouldShowError else { return }
 			focusedField = .message
 		}

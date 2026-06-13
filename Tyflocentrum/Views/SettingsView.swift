@@ -145,7 +145,7 @@ struct SettingsView: View {
 					.accessibilityIdentifier("settings.diagnostics.count")
 			}
 		}
-		.onChange(of: settings.playbackRateRememberMode) { _ in
+		.onChange(of: settings.playbackRateRememberMode) { _, _ in
 			audioPlayer.applyPlaybackRateRememberModeChange()
 		}
 		.navigationTitle("Ustawienia")

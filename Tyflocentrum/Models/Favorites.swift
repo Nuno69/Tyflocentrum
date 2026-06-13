@@ -67,7 +67,7 @@ enum FavoriteArticleOrigin: String, Codable {
 	case page
 }
 
-struct FavoriteTopic: Codable, Equatable, Identifiable {
+struct FavoriteTopic: Codable, Equatable, Hashable, Identifiable {
 	let podcastID: Int
 	let podcastTitle: String
 	let podcastSubtitle: String?

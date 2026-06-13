@@ -46,7 +46,7 @@ final class AudioCuePlayer {
 		do {
 			let session = AVAudioSession.sharedInstance()
 			if session.category != .playback || session.mode != .spokenAudio {
-				try? session.setCategory(.playback, mode: .spokenAudio, options: [.mixWithOthers, .allowBluetooth])
+				try? session.setCategory(.playback, mode: .spokenAudio, options: [.mixWithOthers])
 			}
 			try? session.setActive(true, options: [])
 

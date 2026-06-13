@@ -64,15 +64,13 @@ struct MoreView: View {
 				.buttonStyle(.bordered)
 				.accessibilityHint("Sprawdza, czy trwa audycja interaktywna i otwiera formularz kontaktu.")
 				.accessibilityIdentifier("more.contactRadio")
-
-				NavigationLink(destination: ContactView(), isActive: $shouldNavigateToContact) {
-					EmptyView()
-				}
-				.hidden()
 			}
 			.padding()
 			.withAppMenu()
 			.navigationTitle("Tyfloradio")
+			.navigationDestination(isPresented: $shouldNavigateToContact) {
+				ContactView()
+			}
 			.alert("Błąd", isPresented: $shouldShowNoLiveAlert) {
 				Button("OK") {}
 			} message: {

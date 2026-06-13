@@ -7,8 +7,8 @@
 
 import Foundation
 
-struct Podcast: Codable, Identifiable {
-	struct PodcastTitle: Codable {
+struct Podcast: Codable, Hashable, Identifiable {
+	struct PodcastTitle: Codable, Hashable {
 		var rendered: String
 		private static let fastHTMLPlainTextThresholdBytes: Int = 20000
 		private static let plainTextCache: NSCache<NSString, NSString> = {

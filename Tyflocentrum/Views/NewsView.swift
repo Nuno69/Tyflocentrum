@@ -757,28 +757,9 @@ struct NewsView: View {
 			.withAppMenu()
 			.navigationTitle("Nowości")
 			.navigationBarTitleDisplayMode(.inline)
-			.background(
-				NavigationLink(
-					destination: Group {
-						if let podcast = playerPodcast {
-							PodcastPlayerView(podcast: podcast)
-						} else {
-							EmptyView()
-						}
-					},
-					isActive: Binding(
-						get: { playerPodcast != nil },
-						set: { isActive in
-							if !isActive {
-								playerPodcast = nil
-							}
-						}
-					)
-				) {
-					EmptyView()
-				}
-				.hidden()
-			)
+			.navigationDestination(item: $playerPodcast) { podcast in
+				PodcastPlayerView(podcast: podcast)
+			}
 		}
 	}
 

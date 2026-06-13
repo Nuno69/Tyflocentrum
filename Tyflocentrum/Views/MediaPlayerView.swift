@@ -312,53 +312,30 @@ struct MediaPlayerView: View {
 		.task(id: podcastPostID) {
 			await loadShowNotes()
 		}
-		.background(
-			NavigationLink(
-				destination: Group {
-					if let podcastPostID {
-						ChapterMarkersView(
-							podcastID: podcastPostID,
-							podcastTitle: title,
-							podcastSubtitle: subtitle,
-							markers: chapterMarkers,
-							formatTime: formatTime
-						)
-					} else {
-						EmptyView()
-					}
-				},
-				isActive: $shouldShowChapterMarkers
-			) {
-				EmptyView()
+		.navigationDestination(isPresented: $shouldShowChapterMarkers) {
+			if let podcastPostID {
+				ChapterMarkersView(
+					podcastID: podcastPostID,
+					podcastTitle: title,
+					podcastSubtitle: subtitle,
+					markers: chapterMarkers,
+					formatTime: formatTime
+				)
 			}
-			.hidden()
-		)
-		.background(
-			NavigationLink(
-				destination: Group {
-					if let podcastPostID {
-						RelatedLinksView(
-							podcastID: podcastPostID,
-							podcastTitle: title,
-							podcastSubtitle: subtitle,
-							links: relatedLinks
-						)
-					} else {
-						EmptyView()
-					}
-				},
-				isActive: $shouldShowRelatedLinks
-			) {
-				EmptyView()
+		}
+		.navigationDestination(isPresented: $shouldShowRelatedLinks) {
+			if let podcastPostID {
+				RelatedLinksView(
+					podcastID: podcastPostID,
+					podcastTitle: title,
+					podcastSubtitle: subtitle,
+					links: relatedLinks
+				)
 			}
-			.hidden()
-		)
-		.background(
-			NavigationLink(destination: ContactView(), isActive: $shouldNavigateToContact) {
-				EmptyView()
-			}
-			.hidden()
-		)
+		}
+		.navigationDestination(isPresented: $shouldNavigateToContact) {
+			ContactView()
+		}
 		.accessibilityAction(.magicTap) {
 			togglePlayback()
 		}

@@ -6,6 +6,7 @@ struct FavoritesView: View {
 
 	@State private var filter: FavoritesFilter = .all
 	@State private var playerPodcast: Podcast?
+	@State private var selectedTopic: FavoriteTopic?
 
 	private func announceIfVoiceOver(_ message: String) {
 		guard UIAccessibility.isVoiceOverRunning else { return }
@@ -48,7 +49,7 @@ struct FavoritesView: View {
 						case let .article(summary, origin):
 							FavoriteArticleRow(summary: summary, origin: origin)
 						case let .topic(topic):
-							FavoriteTopicRow(topic: topic)
+							FavoriteTopicRow(topic: topic) { selectedTopic = $0 }
 						case let .link(link):
 							FavoriteLinkRow(link: link)
 						}
@@ -59,28 +60,12 @@ struct FavoritesView: View {
 		.accessibilityIdentifier("favorites.list")
 		.navigationTitle("Ulubione")
 		.navigationBarTitleDisplayMode(.inline)
-		.background(
-			NavigationLink(
-				destination: Group {
-					if let podcast = playerPodcast {
-						PodcastPlayerView(podcast: podcast)
-					} else {
-						EmptyView()
-					}
-				},
-				isActive: Binding(
-					get: { playerPodcast != nil },
-					set: { isActive in
-						if !isActive {
-							playerPodcast = nil
-						}
-					}
-				)
-			) {
-				EmptyView()
-			}
-			.hidden()
-		)
+		.navigationDestination(item: $playerPodcast) { podcast in
+			PodcastPlayerView(podcast: podcast)
+		}
+		.navigationDestination(item: $selectedTopic) { topic in
+			FavoriteTopicPlayerView(topic: topic)
+		}
 	}
 }
 
@@ -134,59 +119,74 @@ private struct FavoriteArticleRow: View {
 
 private struct FavoriteTopicRow: View {
 	let topic: FavoriteTopic
+	let onOpen: (FavoriteTopic) -> Void
 
 	@EnvironmentObject private var favorites: FavoritesStore
-	@State private var shouldNavigateToPlayer = false
 
 	private func announceIfVoiceOver(_ message: String) {
 		guard UIAccessibility.isVoiceOverRunning else { return }
 		UIAccessibility.post(notification: .announcement, argument: message)
 	}
 
-	private func favoriteItem() -> FavoriteItem {
+	private var favoriteItem: FavoriteItem {
 		.topic(topic)
 	}
 
+	private var isFavorite: Bool {
+		favorites.isFavorite(favoriteItem)
+	}
+
+	private var favoriteActionTitle: String {
+		isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"
+	}
+
 	private func toggleFavorite() {
-		let item = favoriteItem()
-		favorites.toggle(item)
+		favorites.toggle(favoriteItem)
 	}
 
 	private func openPlayer() {
-		shouldNavigateToPlayer = true
+		onOpen(topic)
+	}
+
+	private var labelContent: some View {
+		VStack(alignment: .leading, spacing: 4) {
+			Text(topic.title)
+				.foregroundColor(.primary)
+			Text(topic.podcastTitle)
+				.font(.caption)
+				.foregroundColor(.secondary)
+		}
+	}
+
+	@ViewBuilder
+	private var contextMenuActions: some View {
+		Button("Odtwarzaj od tego miejsca") {
+			openPlayer()
+		}
+		Button(favoriteActionTitle) {
+			toggleFavorite()
+		}
 	}
 
 	var body: some View {
-		let item = favoriteItem()
-		let isFavorite = favorites.isFavorite(item)
-
-		NavigationLink(destination: FavoriteTopicPlayerView(topic: topic), isActive: $shouldNavigateToPlayer) {
-			VStack(alignment: .leading, spacing: 4) {
-				Text(topic.title)
-					.foregroundColor(.primary)
-				Text(topic.podcastTitle)
-					.font(.caption)
-					.foregroundColor(.secondary)
-			}
-			.accessibilityElement(children: .ignore)
-			.accessibilityLabel(topic.title)
-			.accessibilityValue(topic.podcastTitle)
-			.accessibilityHint("Dwukrotnie stuknij, aby otworzyć odtwarzacz na tym fragmencie.")
-			.accessibilityAction(named: "Odtwarzaj od tego miejsca") {
-				openPlayer()
-			}
-			.accessibilityAction(named: isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych") {
-				toggleFavorite()
-			}
-			.accessibilityIdentifier("favorites.topic.\(topic.podcastID).\(Int(topic.seconds))")
-			.contextMenu {
-				Button("Odtwarzaj od tego miejsca") {
-					openPlayer()
-				}
-				Button(isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych") {
-					toggleFavorite()
-				}
-			}
+		NavigationLink {
+			FavoriteTopicPlayerView(topic: topic)
+		} label: {
+			labelContent
+		}
+		.accessibilityElement(children: .ignore)
+		.accessibilityLabel(topic.title)
+		.accessibilityValue(topic.podcastTitle)
+		.accessibilityHint("Dwukrotnie stuknij, aby otworzyć odtwarzacz na tym fragmencie.")
+		.accessibilityAction(named: "Odtwarzaj od tego miejsca") {
+			openPlayer()
+		}
+		.accessibilityAction(named: favoriteActionTitle) {
+			toggleFavorite()
+		}
+		.accessibilityIdentifier("favorites.topic.\(topic.podcastID).\(Int(topic.seconds))")
+		.contextMenu {
+			contextMenuActions
 		}
 	}
 }
@@ -265,64 +265,91 @@ private struct FavoriteLinkRow: View {
 		.link(link)
 	}
 
+	private func favoriteActionTitle(isFavorite: Bool) -> String {
+		isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych"
+	}
+
 	private func toggleFavorite() {
 		let item = favoriteItem()
 		favorites.toggle(item)
+	}
+
+	private func shareLink(_ url: URL) {
+		sharePayload = SharePayload(activityItems: [activityItem(for: url)])
+	}
+
+	private func linkLabel(for url: URL) -> some View {
+		VStack(alignment: .leading, spacing: 4) {
+			Text(link.title)
+				.foregroundColor(.primary)
+			if let host = hostLabel(for: url) {
+				Text(host)
+					.font(.caption)
+					.foregroundColor(.secondary)
+			}
+			Text(link.podcastTitle)
+				.font(.caption2)
+				.foregroundColor(.secondary)
+		}
+	}
+
+	@ViewBuilder
+	private func contextMenuActions(for url: URL, isFavorite: Bool) -> some View {
+		Button("Skopiuj link") {
+			copyLink(url)
+		}
+		Button("Udostępnij link") {
+			shareLink(url)
+		}
+		Button(favoriteActionTitle(isFavorite: isFavorite)) {
+			toggleFavorite()
+		}
+	}
+
+	private func unavailableLinkLabel() -> some View {
+		Text(link.title)
+			.foregroundColor(.secondary)
+	}
+
+	private func linkButton(for url: URL, isFavorite: Bool) -> some View {
+		Button {
+			openURL(url)
+		} label: {
+			linkLabel(for: url)
+		}
+		.buttonStyle(.plain)
+		.tint(.primary)
+		.contextMenu {
+			contextMenuActions(for: url, isFavorite: isFavorite)
+		}
+		.accessibilityElement(children: .ignore)
+		.accessibilityLabel(link.title)
+		.accessibilityValue(hostLabel(for: url) ?? "")
+		.accessibilityHint("Otwiera odnośnik.")
+		.accessibilityAction(named: "Skopiuj link") {
+			copyLink(url)
+		}
+		.accessibilityAction(named: "Udostępnij link") {
+			shareLink(url)
+		}
+		.accessibilityAction(named: favoriteActionTitle(isFavorite: isFavorite)) {
+			toggleFavorite()
+		}
 	}
 
 	var body: some View {
 		let item = favoriteItem()
 		let isFavorite = favorites.isFavorite(item)
 
-		if let url = link.url {
-			Button {
-				openURL(url)
-			} label: {
-				VStack(alignment: .leading, spacing: 4) {
-					Text(link.title)
-						.foregroundColor(.primary)
-					if let host = hostLabel(for: url) {
-						Text(host)
-							.font(.caption)
-							.foregroundColor(.secondary)
-					}
-					Text(link.podcastTitle)
-						.font(.caption2)
-						.foregroundColor(.secondary)
-				}
+		Group {
+			if let url = link.url {
+				linkButton(for: url, isFavorite: isFavorite)
+			} else {
+				unavailableLinkLabel()
 			}
-			.buttonStyle(.plain)
-			.tint(.primary)
-			.contextMenu {
-				Button("Skopiuj link") {
-					copyLink(url)
-				}
-				Button("Udostępnij link") {
-					sharePayload = SharePayload(activityItems: [activityItem(for: url)])
-				}
-				Button(isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych") {
-					toggleFavorite()
-				}
-			}
-			.accessibilityElement(children: .ignore)
-			.accessibilityLabel(link.title)
-			.accessibilityValue(hostLabel(for: url) ?? "")
-			.accessibilityHint("Otwiera odnośnik.")
-			.accessibilityAction(named: "Skopiuj link") {
-				copyLink(url)
-			}
-			.accessibilityAction(named: "Udostępnij link") {
-				sharePayload = SharePayload(activityItems: [activityItem(for: url)])
-			}
-			.accessibilityAction(named: isFavorite ? "Usuń z ulubionych" : "Dodaj do ulubionych") {
-				toggleFavorite()
-			}
-			.sheet(item: $sharePayload) { payload in
-				ActivityView(activityItems: payload.activityItems)
-			}
-		} else {
-			Text(link.title)
-				.foregroundColor(.secondary)
+		}
+		.sheet(item: $sharePayload) { payload in
+			ActivityView(activityItems: payload.activityItems)
 		}
 	}
 }

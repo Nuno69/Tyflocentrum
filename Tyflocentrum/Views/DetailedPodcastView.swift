@@ -238,7 +238,7 @@ struct DetailedPodcastView: View {
 			async let commentsTask: Void = loadCommentsCount()
 			_ = await(contentTask, commentsTask)
 		}
-		.onChange(of: commentsCountValueText) { _ in
+		.onChange(of: commentsCountValueText) { _, _ in
 			postLayoutChangedIfVoiceOver()
 			diagnostics.log("podcastDetail.commentsValueChanged id=\(podcast.id) value=\(commentsCountValueText)")
 			guard focusedElement == .commentsSummary else { return }

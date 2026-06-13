@@ -52,7 +52,7 @@ final class VoiceMessageRecorderAudioSessionTests: XCTestCase {
 		XCTAssertEqual(category, .playAndRecord)
 		XCTAssertEqual(mode, .spokenAudio)
 		XCTAssertTrue(options.contains(.defaultToSpeaker))
-		XCTAssertTrue(options.contains(.allowBluetooth))
+		XCTAssertTrue(options.contains(.allowBluetoothHFP))
 
 		XCTAssertEqual(session.events.count, 3)
 		XCTAssertEqual(session.events[1], .setAllowHaptics(true))

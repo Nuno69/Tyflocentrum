@@ -62,7 +62,7 @@ final class VoiceMessageRecorder: NSObject, ObservableObject {
 	}
 
 	static func configureAudioSessionForRecording(_ session: AudioSessionProtocol) throws {
-		try session.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetooth])
+		try session.setCategory(.playAndRecord, mode: .spokenAudio, options: [.defaultToSpeaker, .allowBluetoothHFP])
 		if #available(iOS 13.0, *) {
 			try session.setAllowHapticsAndSystemSoundsDuringRecording(true)
 		}
@@ -176,10 +176,11 @@ final class VoiceMessageRecorder: NSObject, ObservableObject {
 		let segmentElapsedTime = max(0, elapsedTimeSnapshot - baseDurationSeconds)
 		var segmentDurationSeconds = max(durationSecondsSnapshot, segmentElapsedTime)
 		if segmentDurationSeconds <= 0 {
-			let asset = AVURLAsset(url: segmentURL)
-			let assetSeconds = asset.duration.seconds
-			if assetSeconds.isFinite, assetSeconds > 0 {
-				segmentDurationSeconds = assetSeconds
+			if let player = try? AVAudioPlayer(contentsOf: segmentURL) {
+				let playerSeconds = player.duration
+				if playerSeconds.isFinite, playerSeconds > 0 {
+					segmentDurationSeconds = playerSeconds
+				}
 			}
 		}
 
@@ -227,7 +228,7 @@ final class VoiceMessageRecorder: NSObject, ObservableObject {
 					}
 				)
 
-				let mergedSeconds = AVURLAsset(url: mergedURL).duration.seconds
+				let mergedSeconds = try await Self.assetDurationSeconds(for: mergedURL)
 				let durationMs = Int((max(0, mergedSeconds) * 1000.0).rounded())
 
 				await MainActor.run {
@@ -264,6 +265,13 @@ final class VoiceMessageRecorder: NSObject, ObservableObject {
 		case exportFailed
 	}
 
+	private static func assetDurationSeconds(for url: URL) async throws -> Double {
+		let asset = AVURLAsset(url: url)
+		let duration = try await asset.load(.duration)
+		let seconds = duration.seconds
+		return seconds.isFinite ? seconds : 0
+	}
+
 	private static func mergeAudio(
 		baseURL: URL,
 		appendedURL: URL,
@@ -282,12 +290,13 @@ final class VoiceMessageRecorder: NSObject, ObservableObject {
 
 		var cursor = CMTime.zero
 		for asset in [baseAsset, appendedAsset] {
-			guard let track = asset.tracks(withMediaType: .audio).first else {
+			guard let track = try await asset.loadTracks(withMediaType: .audio).first else {
 				throw MergeError.missingAudioTrack
 			}
-			let timeRange = CMTimeRange(start: .zero, duration: asset.duration)
+			let duration = try await asset.load(.duration)
+			let timeRange = CMTimeRange(start: .zero, duration: duration)
 			try compositionTrack.insertTimeRange(timeRange, of: track, at: cursor)
-			cursor = cursor + asset.duration
+			cursor = cursor + duration
 		}
 
 		let outputURL = FileManager.default.temporaryDirectory
@@ -300,23 +309,10 @@ final class VoiceMessageRecorder: NSObject, ObservableObject {
 		guard let export = AVAssetExportSession(asset: composition, presetName: AVAssetExportPresetAppleM4A) else {
 			throw MergeError.exportFailed
 		}
-		export.outputURL = outputURL
-		export.outputFileType = .m4a
 		export.shouldOptimizeForNetworkUse = true
 		exportSessionSetter(export)
 
-		try await withCheckedThrowingContinuation { continuation in
-			export.exportAsynchronously {
-				switch export.status {
-				case .completed:
-					continuation.resume(returning: ())
-				case .cancelled:
-					continuation.resume(throwing: CancellationError())
-				default:
-					continuation.resume(throwing: export.error ?? MergeError.exportFailed)
-				}
-			}
-		}
+		try await export.export(to: outputURL, as: .m4a)
 
 		return outputURL
 	}

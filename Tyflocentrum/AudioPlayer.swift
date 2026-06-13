@@ -384,10 +384,9 @@ final class AudioPlayer: ObservableObject {
 		player.automaticallyWaitsToMinimizeStalling = true
 
 		timeControlStatusObserver = player.observe(\.timeControlStatus, options: [.initial, .new]) { [weak self] player, _ in
-			guard let self else { return }
+			let status = player.timeControlStatus
 			Task { @MainActor in
-				self.isPlaying = player.timeControlStatus == .playing
-				self.updateNowPlayingPlaybackInfo()
+				self?.handleTimeControlStatusChange(status)
 			}
 		}
 
@@ -605,21 +604,32 @@ final class AudioPlayer: ObservableObject {
 		let interval = CMTime(seconds: 1, preferredTimescale: 2)
 		periodicTimeObserver = player.addPeriodicTimeObserver(forInterval: interval, queue: .main) { [weak self] time in
 			guard let self else { return }
-			let seconds = time.seconds
-			if seconds.isFinite {
-				self.elapsedTime = seconds
+			MainActor.assumeIsolated {
+				self.handlePeriodicTime(time)
 			}
-
-			let durationSeconds = self.player.currentItem?.duration.seconds
-			if let durationSeconds, durationSeconds.isFinite, durationSeconds > 0 {
-				self.duration = durationSeconds
-			} else {
-				self.duration = nil
-			}
-
-			self.maybePersistResumeTime(seconds)
-			self.updateNowPlayingPlaybackInfo()
 		}
+	}
+
+	private func handleTimeControlStatusChange(_ status: AVPlayer.TimeControlStatus) {
+		isPlaying = status == .playing
+		updateNowPlayingPlaybackInfo()
+	}
+
+	private func handlePeriodicTime(_ time: CMTime) {
+		let seconds = time.seconds
+		if seconds.isFinite {
+			elapsedTime = seconds
+		}
+
+		let durationSeconds = player.currentItem?.duration.seconds
+		if let durationSeconds, durationSeconds.isFinite, durationSeconds > 0 {
+			duration = durationSeconds
+		} else {
+			duration = nil
+		}
+
+		maybePersistResumeTime(seconds)
+		updateNowPlayingPlaybackInfo()
 	}
 
 	private func setupNotifications() {
@@ -629,28 +639,8 @@ final class AudioPlayer: ObservableObject {
 			queue: .main
 		) { [weak self] notification in
 			guard let self else { return }
-			guard let userInfo = notification.userInfo,
-			      let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
-			      let type = AVAudioSession.InterruptionType(rawValue: typeValue)
-			else {
-				return
-			}
-
-			switch type {
-			case .began:
-				self.pause()
-			case .ended:
-				let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt
-				let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue ?? 0)
-				if options.contains(.shouldResume), self.currentURL != nil {
-					if self.isLiveStream {
-						self.player.play()
-					} else {
-						self.player.playImmediately(atRate: self.playbackRate)
-					}
-				}
-			@unknown default:
-				break
+			MainActor.assumeIsolated {
+				self.handleAudioSessionInterruption(notification)
 			}
 		}
 
@@ -660,15 +650,47 @@ final class AudioPlayer: ObservableObject {
 			queue: .main
 		) { [weak self] notification in
 			guard let self else { return }
-			guard let item = notification.object as? AVPlayerItem else { return }
-			guard item === self.player.currentItem else { return }
-
-			self.isPlaying = false
-			if let resumeKey = self.resumeKey {
-				self.resumeStore.clear(forKey: resumeKey)
+			MainActor.assumeIsolated {
+				self.handlePlaybackDidEnd(notification)
 			}
-			self.updateNowPlayingPlaybackInfo()
 		}
+	}
+
+	private func handleAudioSessionInterruption(_ notification: Notification) {
+		guard let userInfo = notification.userInfo,
+		      let typeValue = userInfo[AVAudioSessionInterruptionTypeKey] as? UInt,
+		      let type = AVAudioSession.InterruptionType(rawValue: typeValue)
+		else {
+			return
+		}
+
+		switch type {
+		case .began:
+			pause()
+		case .ended:
+			let optionsValue = userInfo[AVAudioSessionInterruptionOptionKey] as? UInt
+			let options = AVAudioSession.InterruptionOptions(rawValue: optionsValue ?? 0)
+			if options.contains(.shouldResume), currentURL != nil {
+				if isLiveStream {
+					player.play()
+				} else {
+					player.playImmediately(atRate: playbackRate)
+				}
+			}
+		@unknown default:
+			break
+		}
+	}
+
+	private func handlePlaybackDidEnd(_ notification: Notification) {
+		guard let item = notification.object as? AVPlayerItem else { return }
+		guard item === player.currentItem else { return }
+
+		isPlaying = false
+		if let resumeKey {
+			resumeStore.clear(forKey: resumeKey)
+		}
+		updateNowPlayingPlaybackInfo()
 	}
 
 	private func setupRemoteCommands() {
@@ -812,14 +834,17 @@ final class AudioPlayer: ObservableObject {
 
 	private func scheduleSeekWhenReady(_ seconds: Double) {
 		currentItemStatusObserver = player.currentItem?.observe(\.status, options: [.initial, .new]) { [weak self] item, _ in
-			guard let self else { return }
 			guard item.status == .readyToPlay else { return }
 
-			Task { @MainActor in
-				self.seek(to: seconds)
-				self.currentItemStatusObserver = nil
+			Task { @MainActor [weak self] in
+				self?.handleCurrentItemReadyForScheduledSeek(seconds)
 			}
 		}
+	}
+
+	private func handleCurrentItemReadyForScheduledSeek(_ seconds: Double) {
+		seek(to: seconds)
+		currentItemStatusObserver = nil
 	}
 
 	private func maybePersistResumeTime(_ seconds: Double) {
